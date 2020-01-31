@@ -76,7 +76,7 @@ namespace VisualARQAdvancedSelector
 
 
 
-
+        // METHODS
 
         // Get the parameter name
         public string GetParamName()
@@ -85,7 +85,7 @@ namespace VisualARQAdvancedSelector
         }
 
         // Get the type of comparison
-        private int GetComparisonType()
+        public int GetComparisonType()
         {
             return Comparison_value.SelectedIndex;
         }
@@ -97,7 +97,7 @@ namespace VisualARQAdvancedSelector
         }
 
         // Get the add to current selection checkbox
-        private bool? GetAddToSelection()
+        public bool? GetAddToSelection()
         {
             return Add_to_selection_checkbox.Checked;
         }
@@ -122,9 +122,5 @@ namespace VisualARQAdvancedSelector
                 Close(true);
             }
         }
-
-
-
-
     }
 }
