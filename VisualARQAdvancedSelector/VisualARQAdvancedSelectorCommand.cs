@@ -30,6 +30,11 @@ namespace VisualARQAdvancedSelector
             get { return "vaAdvancedSelector"; }
         }
 
+        private double DegreeToRadian(double angle)
+        {
+            return Math.PI * angle / 180.0;
+        }
+
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
             SelectionDialog sd = new SelectionDialog();
@@ -54,7 +59,8 @@ namespace VisualARQAdvancedSelector
 
                     if (paramValue != "") // Search by name and value.
                     {
-                        if (Single.TryParse(paramValue, out float numValue)) // If the input param value can be converted to num then compare as num and as text.
+                        // If the input param value can be converted to num then compare as num and as text.
+                        if (Double.TryParse(paramValue, out double numValue))
                         {
                             int comparison = sd.GetComparisonType();
                             if (comparison == 0) // Equality comparison.
@@ -64,12 +70,23 @@ namespace VisualARQAdvancedSelector
                                     Guid paramId = GetObjectParameterId(paramName, o.Id, true);
                                     ParameterType t = GetParameterType(paramId);
                                     // First type number comparison.
-                                    if ((t == ParameterType.Number || t == ParameterType.Integer || t == ParameterType.Length || t == ParameterType.Ratio) // TODO missing num types
-                                        && numValue == float.Parse(GetParameterValue(paramId, o.Id).ToString()))
+                                    if ((t == ParameterType.Number || t == ParameterType.Integer || t == ParameterType.Length || t == ParameterType.Ratio || t == ParameterType.Currency) // TODO missing num types
+                                        && numValue == Convert.ToDouble(GetParameterValue(paramId, o.Id)))
                                     {
                                         matched.Add(o);
                                     }
-                                    else if (GetParameterValue(paramId, o.Id) != null && paramValue == GetParameterValue(paramId, o.Id).ToString()) // If it is a number but as a string.
+                                    // Type angle comparison.
+                                    else if (t == ParameterType.Angle && DegreeToRadian(numValue) == Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                    {
+                                        matched.Add(o);
+                                    }
+                                    // Type percentage comparison.
+                                    else if (t == ParameterType.Percentage && (numValue / 100.0) == Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                    {
+                                        matched.Add(o);
+                                    }
+                                    // If it is a number but as a string.
+                                    else if (GetParameterValue(paramId, o.Id) != null && paramValue == GetParameterValue(paramId, o.Id).ToString())
                                     {
                                         matched.Add(o);
                                     }
