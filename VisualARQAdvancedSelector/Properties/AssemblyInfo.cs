@@ -7,7 +7,7 @@ using Rhino.PlugIns;
 // These will show in Rhino's option dialog, in the tab Plug-ins.
 [assembly: PlugInDescription(DescriptionType.Address, "-")]
 [assembly: PlugInDescription(DescriptionType.Country, "-")]
-[assembly: PlugInDescription(DescriptionType.Email, "-")]
+[assembly: PlugInDescription(DescriptionType.Email, "juanramoncarceles@gmail.com")]
 [assembly: PlugInDescription(DescriptionType.Phone, "-")]
 [assembly: PlugInDescription(DescriptionType.Fax, "-")]
 [assembly: PlugInDescription(DescriptionType.Organization, "-")]
@@ -24,7 +24,7 @@ using Rhino.PlugIns;
 [assembly: AssemblyTitle("VisualARQAdvancedSelector")]
 
 // This will be used also for the plug-in description.
-[assembly: AssemblyDescription("VisualARQAdvancedSelector utility plug-in")]
+[assembly: AssemblyDescription("VisualARQAdvancedSelector allows the selection of objects based on its features.")]
 
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
