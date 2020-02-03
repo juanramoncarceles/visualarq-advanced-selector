@@ -35,6 +35,30 @@ namespace VisualARQAdvancedSelector
             return Math.PI * angle / 180.0;
         }
 
+        /// <summary>
+        /// Identifies if the VisualARQ parameter type is a numerical type that can be interpreted without conversion.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        private bool IsDirectNumericalType(ParameterType t)
+        {
+            if (t == ParameterType.Number ||
+                t == ParameterType.Integer ||
+                t == ParameterType.Length ||
+                t == ParameterType.Area || // Remove from here and convert to meters before comparing?
+                t == ParameterType.Volume || // Remove from here and convert to meters before comparing?
+                t == ParameterType.Scale ||
+                t == ParameterType.Ratio ||
+                t == ParameterType.Currency)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
             SelectionDialog sd = new SelectionDialog();
@@ -70,8 +94,7 @@ namespace VisualARQAdvancedSelector
                                     Guid paramId = GetObjectParameterId(paramName, o.Id, true);
                                     ParameterType t = GetParameterType(paramId);
                                     // First type number comparison.
-                                    if ((t == ParameterType.Number || t == ParameterType.Integer || t == ParameterType.Length || t == ParameterType.Ratio || t == ParameterType.Currency) // TODO missing num types
-                                        && numValue == Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                    if (IsDirectNumericalType(t) && numValue == Convert.ToDouble(GetParameterValue(paramId, o.Id)))
                                     {
                                         matched.Add(o);
                                     }
@@ -98,8 +121,18 @@ namespace VisualARQAdvancedSelector
                                 {
                                     Guid paramId = GetObjectParameterId(paramName, o.Id, true);
                                     ParameterType t = GetParameterType(paramId);
-                                    if ((t == ParameterType.Number || t == ParameterType.Integer || t == ParameterType.Length || t == ParameterType.Ratio) // TODO missing num types
-                                        && numValue > float.Parse(GetParameterValue(paramId, o.Id).ToString()))
+                                    // First type number comparison.
+                                    if (IsDirectNumericalType(t) && numValue > Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                    {
+                                        matched.Add(o);
+                                    }
+                                    // Type angle comparison.
+                                    else if (t == ParameterType.Angle && DegreeToRadian(numValue) > Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                    {
+                                        matched.Add(o);
+                                    }
+                                    // Type percentage comparison.
+                                    else if (t == ParameterType.Percentage && (numValue / 100.0) > Convert.ToDouble(GetParameterValue(paramId, o.Id)))
                                     {
                                         matched.Add(o);
                                     }
@@ -111,15 +144,25 @@ namespace VisualARQAdvancedSelector
                                 {
                                     Guid paramId = GetObjectParameterId(paramName, o.Id, true);
                                     ParameterType t = GetParameterType(paramId);
-                                    if ((t == ParameterType.Number || t == ParameterType.Integer || t == ParameterType.Length || t == ParameterType.Ratio) // TODO missing num types
-                                        && numValue < float.Parse(GetParameterValue(paramId, o.Id).ToString()))
+                                    // First type number comparison.
+                                    if (IsDirectNumericalType(t) && numValue < Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                    {
+                                        matched.Add(o);
+                                    }
+                                    // Type angle comparison.
+                                    else if (t == ParameterType.Angle && DegreeToRadian(numValue) < Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                    {
+                                        matched.Add(o);
+                                    }
+                                    // Type percentage comparison.
+                                    else if (t == ParameterType.Percentage && (numValue / 100.0) < Convert.ToDouble(GetParameterValue(paramId, o.Id)))
                                     {
                                         matched.Add(o);
                                     }
                                 }
                             }
                         }
-                        else // If it cannot be converted to num then only compare as string.
+                        else // If it cannot be converted to num then only compare as text.
                         {
                             int comparison = sd.GetComparisonType();
                             if (comparison == 0) // Equality comparison.
@@ -127,7 +170,7 @@ namespace VisualARQAdvancedSelector
                                 foreach (Rhino.DocObjects.RhinoObject o in rhobjs)
                                 {
                                     Guid paramId = GetObjectParameterId(paramName, o.Id, true);
-                                    if (paramValue == GetParameterValue(paramId, o.Id).ToString())
+                                    if (paramValue == GetParameterValue(paramId, o.Id).ToString()) // ToString because bool is also compared here.
                                     {
                                         matched.Add(o);
                                     }
@@ -158,8 +201,14 @@ namespace VisualARQAdvancedSelector
                         {
                             o.Select(true);
                         }
-                        // TODO set different variations of the phrase.
-                        RhinoApp.WriteLine("{0} objects were selected.", matched.Count);
+                        if (matched.Count == 1)
+                        {
+                            RhinoApp.WriteLine("1 object was selected.");
+                        }
+                        else
+                        {
+                            RhinoApp.WriteLine("{0} objects were selected.", matched.Count);
+                        }
                     }
                     else
                     {
