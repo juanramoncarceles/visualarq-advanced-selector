@@ -2,14 +2,14 @@
 using Eto.Forms;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using static VisualARQ.Script;
 
 namespace VisualARQAdvancedSelector
 {
-    class MyPoco
+    class TextItem
     {
         public string Text { get; set; }
-        public bool Check { get; set; }
+        
     }
 
     public class OpeningsFilterDialog : Dialog<bool>
@@ -28,32 +28,37 @@ namespace VisualARQAdvancedSelector
             AbortButton = new Button { Text = "Cancel" };
             AbortButton.Click += OnCloseButtonClick;
 
-
-            // Styles list TEST
-            ObservableCollection<MyPoco> collection = new ObservableCollection<MyPoco>
+            // Window styles list
+            Guid[] windowStyleIds = GetAllWindowStyleIds();
+            List<TextItem> windowStyleNames = new List<TextItem>();
+            foreach (Guid wStyleId in windowStyleIds)
             {
-                new MyPoco { Text = "Style 1", Check = true },
-                new MyPoco { Text = "Style 2", Check = false }
-            };
-
-            Styles_list.DataStore = collection;
-            //GridView Styles_list = new GridView
-            //{
-            //   DataStore = collection
-            //};
-
-            Styles_list.Columns.Add(new GridColumn
+                windowStyleNames.Add(new TextItem { Text = GetStyleName(wStyleId) });
+            }
+            Window_styles_list.AllowMultipleSelection = true;
+            Window_styles_list.Height = 150;
+            Window_styles_list.DataStore = windowStyleNames;
+            Window_styles_list.Columns.Add(new GridColumn
             {
-                DataCell = new TextBoxCell { Binding = Binding.Property<MyPoco, string>(r => r.Text) },
-                HeaderText = "Style"
+                DataCell = new TextBoxCell { Binding = Binding.Property<TextItem, string>(r => r.Text) },
+                HeaderText = "Window Styles"
             });
 
-            Styles_list.Columns.Add(new GridColumn
+            // Door styles list
+            Guid[] doorStyleIds = GetAllDoorStyleIds();
+            List<TextItem> doorStyleNames = new List<TextItem>();
+            foreach (Guid dStyleId in doorStyleIds)
             {
-                DataCell = new CheckBoxCell { Binding = Binding.Property<MyPoco, bool?>(r => r.Check) },
-                HeaderText = ""
+                doorStyleNames.Add(new TextItem { Text = GetStyleName(dStyleId) });
+            }
+            Door_styles_list.AllowMultipleSelection = true;
+            Door_styles_list.Height = 150;
+            Door_styles_list.DataStore = doorStyleNames;
+            Door_styles_list.Columns.Add(new GridColumn
+            {
+                DataCell = new TextBoxCell { Binding = Binding.Property<TextItem, string>(r => r.Text) },
+                HeaderText = "Door Styles"
             });
-
 
             // Table layout to add all the controls
             DynamicLayout layout = new DynamicLayout
@@ -67,7 +72,7 @@ namespace VisualARQAdvancedSelector
             layout.EndVertical();
             layout.BeginVertical();
             layout.AddRow(Styles_label);
-            layout.AddRow(Styles_list, Styles_dropdown);
+            layout.AddRow(Window_styles_list, Door_styles_list);
             layout.EndVertical();
             layout.BeginVertical();
             layout.AddRow(Profiles_label);
@@ -84,13 +89,16 @@ namespace VisualARQAdvancedSelector
             Content = layout;
         }
 
-        GridView Styles_list = new GridView();
-        
+        // Opening styles grid container.
+        GridView Window_styles_list = new GridView();
+        GridView Door_styles_list = new GridView();
 
         // Object type label
         private Label Object_type_label = new Label
         {
-            Text = "Object type"
+            Text = "Object type",
+            Height = 22,
+            ToolTip = "Choose the opening type you would like to include in the search."
         };
 
         // Add windows input
@@ -110,18 +118,9 @@ namespace VisualARQAdvancedSelector
         // Styles label
         private Label Styles_label = new Label
         {
-            Text = "Styles"
-        };
-
-        
-
-
-
-        // Styles dropdown test
-        private DropDown Styles_dropdown = new DropDown
-        {
-            DataStore = new string[4] { "Style 1", "Style 2", "Style 3", "Style 4" },
-            SelectedIndex = 0
+            Text = "Styles",
+            Height = 22,
+            ToolTip = "Indicate the styles you would like to include in the search. Multiple selection is possible by pressing Ctrl key."
         };
 
         // Profile templates label
@@ -159,7 +158,6 @@ namespace VisualARQAdvancedSelector
         };
 
 
-
         // METHODS
 
         // Check if windows should be included.
@@ -175,14 +173,15 @@ namespace VisualARQAdvancedSelector
         }
 
         // Get all the selected window styles.
-        public List<Guid> GetSelectedWindowStyles()
+        // TEMP set as List<Guid>
+        public IEnumerable<int> GetSelectedWindowStyles()
         {
-            List<Guid> styleIds = new List<Guid>();
+            //List<int> styleIds = new List<int>();
+            
+            // TODO... return guids of styles...
+            IEnumerable<int> selectedRows = Window_styles_list.SelectedRows;
 
-            // TODO...
-            styleIds = Styles_list.SelectedItems;
-
-            return styleIds;
+            return selectedRows;
         }
 
         // Get all the selected door styles.
