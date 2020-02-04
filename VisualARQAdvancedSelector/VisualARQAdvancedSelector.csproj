@@ -57,6 +57,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="OpeningsFilterCommand.cs" />
+    <Compile Include="OpeningsFilterDialog.cs" />
     <Compile Include="OpeningsFilter.cs" />
     <Compile Include="SelectionDialog.cs" />
     <Compile Include="VisualARQAdvancedSelectorCommand.cs" />
