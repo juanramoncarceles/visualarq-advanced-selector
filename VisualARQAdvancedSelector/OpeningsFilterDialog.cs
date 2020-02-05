@@ -60,6 +60,14 @@ namespace VisualARQAdvancedSelector
                 HeaderText = "Door Styles"
             });
 
+            // Profile templates thumbs list
+            Icon Rect_profile = new Icon(@"EmbeddedResources/Rectangular-24.ico");
+            Icon Round_profile = new Icon(@"EmbeddedResources/Round-24.ico");
+            Icon Romanic_profile = new Icon(@"EmbeddedResources/Romanic-24.ico");
+            Icon Gothic_profile = new Icon(@"EmbeddedResources/Gothic-24.ico");
+            Icon Arch90_profile = new Icon(@"EmbeddedResources/90arch-24.ico");
+            Icon Custom_profile = new Icon(@"EmbeddedResources/Custom-24.ico");
+
             // Table layout to add all the controls
             DynamicLayout layout = new DynamicLayout
             {
@@ -77,6 +85,14 @@ namespace VisualARQAdvancedSelector
             layout.BeginVertical();
             layout.AddRow(Profiles_label);
             // layout.AddRow(Profiles_list);
+            // Test profile icons
+            layout.AddRow(Rect_profile);
+            layout.AddRow(Round_profile);
+            layout.AddRow(Romanic_profile);
+            layout.AddRow(Gothic_profile);
+            layout.AddRow(Arch90_profile);
+            layout.AddRow(Custom_profile);
+
             layout.EndVertical();
             layout.BeginVertical();
             layout.AddRow(Profile_dim_label);
