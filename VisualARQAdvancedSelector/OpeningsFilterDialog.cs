@@ -2,6 +2,7 @@
 using Eto.Forms;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using static VisualARQ.Script;
 
 namespace VisualARQAdvancedSelector
@@ -9,7 +10,12 @@ namespace VisualARQAdvancedSelector
     class TextItem
     {
         public string Text { get; set; }
-        
+    }
+
+    class ImageTextItem
+    {
+        public string Text { get; set; }
+        public Icon Image { get; set; }
     }
 
     public class OpeningsFilterDialog : Dialog<bool>
@@ -60,15 +66,65 @@ namespace VisualARQAdvancedSelector
                 HeaderText = "Door Styles"
             });
 
-            // Profile templates thumbs list
-            Icon Rect_profile = new Icon(@"EmbeddedResources/Rectangular-24.ico");
-            Icon Round_profile = new Icon(@"EmbeddedResources/Round-24.ico");
-            Icon Romanic_profile = new Icon(@"EmbeddedResources/Romanic-24.ico");
-            Icon Gothic_profile = new Icon(@"EmbeddedResources/Gothic-24.ico");
-            Icon Arch90_profile = new Icon(@"EmbeddedResources/90arch-24.ico");
-            Icon Custom_profile = new Icon(@"EmbeddedResources/Custom-24.ico");
+            // The executing assembly to retrieve the icons.
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string iconsPath = "VisualARQAdvancedSelector.EmbeddedResources";
 
-            // Table layout to add all the controls
+            // Profile templates thumbs list
+            Icon Rect_profile = new Icon(assembly.GetManifestResourceStream(iconsPath + ".Rectangular-24.ico"));
+            Icon Round_profile = new Icon(assembly.GetManifestResourceStream(iconsPath + ".Round-24.ico"));
+            Icon Romanic_profile = new Icon(assembly.GetManifestResourceStream(iconsPath + ".Romanic-24.ico"));
+            Icon Gothic_profile = new Icon(assembly.GetManifestResourceStream(iconsPath + ".Gothic-24.ico"));
+            Icon Arch90_profile = new Icon(assembly.GetManifestResourceStream(iconsPath + ".90arch-24.ico"));
+            Icon Custom_profile = new Icon(assembly.GetManifestResourceStream(iconsPath + ".Custom-24.ico"));
+
+            // Profile templates list
+            Guid[] profileTemplateIds = GetProfileTemplates();
+            List<ImageTextItem> profileTemplateNames = new List<ImageTextItem>();
+            foreach (Guid pTemplId in profileTemplateIds)
+            {
+                string pn = GetProfileName(pTemplId);
+                switch (pn)
+                {
+                    case "Rectangular":
+                        profileTemplateNames.Add(new ImageTextItem { Text = pn, Image = Rect_profile });
+                        break;
+                    case "Circular":
+                        profileTemplateNames.Add(new ImageTextItem { Text = pn, Image = Round_profile });
+                        break;
+                    case "Romanic":
+                        profileTemplateNames.Add(new ImageTextItem { Text = pn, Image = Romanic_profile });
+                        break;
+                    case "Gothic":
+                        profileTemplateNames.Add(new ImageTextItem { Text = pn, Image = Gothic_profile });
+                        break;
+                    case "90º Arc":
+                        profileTemplateNames.Add(new ImageTextItem { Text = pn, Image = Arch90_profile });
+                        break;
+                    default:
+                        profileTemplateNames.Add(new ImageTextItem { Text = pn, Image = Custom_profile });
+                        break;
+                }
+                if (IsOpeningProfile(pTemplId)) // TEMP
+                {
+                    // Only 90ªArc, Romanic and Gothic are considered opening profiles.
+                    Rhino.RhinoApp.WriteLine(GetProfileName(pTemplId)); // Temp
+                }
+            }
+            Profile_templates_list.AllowMultipleSelection = true;
+            Profile_templates_list.Height = 150;
+            Profile_templates_list.ShowHeader = false;
+            Profile_templates_list.DataStore = profileTemplateNames;
+            Profile_templates_list.Columns.Add(new GridColumn
+            {
+                DataCell = new ImageTextCell
+                {
+                    ImageBinding = Binding.Property<ImageTextItem, Image>(r => r.Image),
+                    TextBinding = Binding.Property<TextItem, string>(r => r.Text)
+                }
+            });
+
+            // Table layout to add all the controls.
             DynamicLayout layout = new DynamicLayout
             {
                 Spacing = new Size(15, 15),
@@ -84,19 +140,11 @@ namespace VisualARQAdvancedSelector
             layout.EndVertical();
             layout.BeginVertical();
             layout.AddRow(Profiles_label);
-            // layout.AddRow(Profiles_list);
-            // Test profile icons
-            layout.AddRow(Rect_profile);
-            layout.AddRow(Round_profile);
-            layout.AddRow(Romanic_profile);
-            layout.AddRow(Gothic_profile);
-            layout.AddRow(Arch90_profile);
-            layout.AddRow(Custom_profile);
-
+            layout.AddRow(Profile_templates_list);
             layout.EndVertical();
             layout.BeginVertical();
             layout.AddRow(Profile_dim_label);
-            layout.AddRow(Profile_dim_comparison, Profile_dim_first_input); // TODO: missing the second input
+            layout.AddRow(Profile_width_label, Profile_dim_comparison, Profile_dim_first_input, "and", Profile_dim_second_input); // TODO: missing the second input
             layout.EndVertical();
             layout.BeginVertical();
             layout.AddRow(Add_to_selection_checkbox);
@@ -104,10 +152,6 @@ namespace VisualARQAdvancedSelector
             layout.AddSeparateRow(null, DefaultButton, null, AbortButton, null);
             Content = layout;
         }
-
-        // Opening styles grid container.
-        GridView Window_styles_list = new GridView();
-        GridView Door_styles_list = new GridView();
 
         // Object type label
         private Label Object_type_label = new Label
@@ -139,20 +183,39 @@ namespace VisualARQAdvancedSelector
             ToolTip = "Indicate the styles you would like to include in the search. Multiple selection is possible by pressing Ctrl key."
         };
 
+        // Opening styles grid container.
+        GridView Window_styles_list = new GridView();
+        GridView Door_styles_list = new GridView();
+
         // Profile templates label
         private Label Profiles_label = new Label
         {
             Text = "Profiles"
         };
 
-        // TODO: multi select list of profile templates.
+        // Profile templates grid container.
+        GridView Profile_templates_list = new GridView();
 
         // Profile dimensions label
         private Label Profile_dim_label = new Label
         {
             Text = "Profile dimensions"
         };
-        
+
+        // Profile width dimensions label
+        private Label Profile_width_label = new Label
+        {
+            Text = "Width",
+            VerticalAlignment = VerticalAlignment.Bottom, // Is this doing anything?
+            Width = 25 // Is this doing anything?
+        };
+
+        // Profile height dimensions label
+        private Label Profile_height_label = new Label
+        {
+            Text = "Heigh"
+        };
+
         // Profile dimensions comparison
         private DropDown Profile_dim_comparison = new DropDown
         {
