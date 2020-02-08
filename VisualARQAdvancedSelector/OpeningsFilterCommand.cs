@@ -39,11 +39,18 @@ namespace VisualARQAdvancedSelector
             {
                 // TODO logic
 
-                IEnumerable<int> testSelectedItems = ofd.GetSelectedWindowStyles();
+                //IEnumerable<int> testSelectedItems = ofd.GetSelectedWindowStyles();
 
-                foreach (int i in testSelectedItems)
+                //foreach (int i in testSelectedItems)
+                //{
+                //    RhinoApp.WriteLine(i.ToString());
+                //}
+
+                List<Guid> selectedWindowStyles = ofd.GetSelectedWindowStyles();
+
+                foreach (Guid id in selectedWindowStyles)
                 {
-                    RhinoApp.WriteLine(i.ToString());
+                    RhinoApp.WriteLine(id.ToString());
                 }
 
                 RhinoApp.WriteLine("Ok");
