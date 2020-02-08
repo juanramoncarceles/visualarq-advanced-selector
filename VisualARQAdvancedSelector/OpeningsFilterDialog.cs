@@ -2,6 +2,7 @@
 using Eto.Forms;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using static VisualARQ.Script;
 
@@ -27,7 +28,7 @@ namespace VisualARQAdvancedSelector
             Resizable = false;
 
             // Default button
-            DefaultButton = new Button { Text = "Select" };
+            DefaultButton = new Button { Text = "Select", Size = new Size(-1, 25) };
             DefaultButton.Click += OnSelectButtonClick;
 
             // Abort button
@@ -81,39 +82,41 @@ namespace VisualARQAdvancedSelector
             // Profile templates list
             Guid[] profileTemplateIds = GetProfileTemplates();
             List<ImageTextItem> profileTemplateNames = new List<ImageTextItem>();
-            foreach (Guid pTemplId in profileTemplateIds)
+            for (int i = 0; i < profileTemplateIds.Length; i++)
             {
-                string pn = GetProfileName(pTemplId);
-                switch (pn)
+                string profileName = GetProfileName(profileTemplateIds[i]);
+                Profile_template_names_indexes.Add(profileName, i);
+                switch (profileName)
                 {
                     case "Rectangular":
-                        profileTemplateNames.Add(new ImageTextItem { Text = pn, Image = Rect_profile });
+                        profileTemplateNames.Add(new ImageTextItem { Text = profileName, Image = Rect_profile });
                         break;
                     case "Circular":
-                        profileTemplateNames.Add(new ImageTextItem { Text = pn, Image = Round_profile });
+                        profileTemplateNames.Add(new ImageTextItem { Text = profileName, Image = Round_profile });
                         break;
                     case "Romanic":
-                        profileTemplateNames.Add(new ImageTextItem { Text = pn, Image = Romanic_profile });
+                        profileTemplateNames.Add(new ImageTextItem { Text = profileName, Image = Romanic_profile });
                         break;
                     case "Gothic":
-                        profileTemplateNames.Add(new ImageTextItem { Text = pn, Image = Gothic_profile });
+                        profileTemplateNames.Add(new ImageTextItem { Text = profileName, Image = Gothic_profile });
                         break;
                     case "90º Arc":
-                        profileTemplateNames.Add(new ImageTextItem { Text = pn, Image = Arch90_profile });
+                        profileTemplateNames.Add(new ImageTextItem { Text = profileName, Image = Arch90_profile });
                         break;
                     default:
-                        profileTemplateNames.Add(new ImageTextItem { Text = pn, Image = Custom_profile });
+                        profileTemplateNames.Add(new ImageTextItem { Text = profileName, Image = Custom_profile });
                         break;
                 }
-                if (IsOpeningProfile(pTemplId)) // TEMP
+                if (IsOpeningProfile(profileTemplateIds[i])) // TEMP
                 {
                     // Only 90ªArc, Romanic and Gothic are considered opening profiles.
-                    Rhino.RhinoApp.WriteLine(GetProfileName(pTemplId)); // Temp
+                    Rhino.RhinoApp.WriteLine(GetProfileName(profileTemplateIds[i])); // Temp
                 }
             }
             Profile_templates_list.AllowMultipleSelection = true;
             Profile_templates_list.Height = 150;
             Profile_templates_list.ShowHeader = false;
+            Profile_templates_list.SelectedRowsChanged += SelectedProfileTemplatesHandler;
             Profile_templates_list.DataStore = profileTemplateNames;
             Profile_templates_list.Columns.Add(new GridColumn
             {
@@ -128,7 +131,7 @@ namespace VisualARQAdvancedSelector
             DynamicLayout layout = new DynamicLayout
             {
                 Spacing = new Size(15, 15),
-                Padding = new Padding(10)
+                Padding = new Padding(10),
             };
             layout.BeginVertical();
             layout.AddRow(Object_type_label);
@@ -143,8 +146,14 @@ namespace VisualARQAdvancedSelector
             layout.AddRow(Profile_templates_list);
             layout.EndVertical();
             layout.BeginVertical();
-            layout.AddRow(Profile_dim_label);
-            layout.AddRow(Profile_width_label, Profile_dim_comparison, Profile_dim_first_input, "and", Profile_dim_second_input); // TODO: missing the second input
+            DynamicLayout group = new DynamicLayout();
+            group.AddRow(Rect_profile_width_label, Rect_profile_width_comparison, Rect_profile_width_first_input, "and", Rect_profile_width_second_input);
+            group.AddRow(Rect_profile_height_label, Rect_profile_height_comparison, Rect_profile_height_first_input, "and", Rect_profile_height_second_input);
+            Rectangular_profile_dim_group.Content = group;
+            layout.AddRow(Rectangular_profile_dim_group);
+            layout.EndVertical();
+            layout.BeginVertical();
+            layout.AddRow(); // TODO: missing the second input
             layout.EndVertical();
             layout.BeginVertical();
             layout.AddRow(Add_to_selection_checkbox);
@@ -152,6 +161,8 @@ namespace VisualARQAdvancedSelector
             layout.AddSeparateRow(null, DefaultButton, null, AbortButton, null);
             Content = layout;
         }
+
+        private Dictionary<string, int> Profile_template_names_indexes = new Dictionary<string, int>();
 
         // Object type label
         private Label Object_type_label = new Label
@@ -190,45 +201,69 @@ namespace VisualARQAdvancedSelector
         // Profile templates label
         private Label Profiles_label = new Label
         {
-            Text = "Profiles"
+            Text = "Profiles",
+            Height = 22
         };
 
         // Profile templates grid container.
         GridView Profile_templates_list = new GridView();
 
+        // Rectangular profile template dimensions group.
+        private GroupBox Rectangular_profile_dim_group = new GroupBox
+        {
+            Text = "Rectangular profile dimensions",
+            Padding = 5,
+            Size = new Size(5, 5)
+        };
+
         // Profile dimensions label
         private Label Profile_dim_label = new Label
         {
-            Text = "Profile dimensions"
+            Text = "Profile dimensions",
+            Height = 22 // TODO: This doesnt work beacause it has an endvertical...
         };
 
         // Profile width dimensions label
-        private Label Profile_width_label = new Label
+        private Label Rect_profile_width_label = new Label
         {
             Text = "Width",
-            VerticalAlignment = VerticalAlignment.Bottom, // Is this doing anything?
-            Width = 25 // Is this doing anything?
+            VerticalAlignment = VerticalAlignment.Center            
         };
 
         // Profile height dimensions label
-        private Label Profile_height_label = new Label
+        private Label Rect_profile_height_label = new Label
         {
-            Text = "Heigh"
+            Text = "Heigh",
+            VerticalAlignment = VerticalAlignment.Center
         };
 
-        // Profile dimensions comparison
-        private DropDown Profile_dim_comparison = new DropDown
+        // Rectangular profile width dimension comparison
+        private DropDown Rect_profile_width_comparison = new DropDown
         {
             DataStore = new string[4] { "is equal to", "is less than", "is greater than", "is between" },
             SelectedIndex = 0
         };
 
-        // Profile dimension primary input
-        private TextBox Profile_dim_first_input = new TextBox();
+        // Rectangular profile height dimension comparison
+        private DropDown Rect_profile_height_comparison = new DropDown
+        {
+            DataStore = new string[4] { "is equal to", "is less than", "is greater than", "is between" },
+            SelectedIndex = 0
+        };
 
-        // Profile dimension secondary input
-        private TextBox Profile_dim_second_input = new TextBox();
+        // Rectangular profile width dimension first input
+        private TextBox Rect_profile_width_first_input = new TextBox();
 
+        // Rectangular Profile width dimension second input
+        private TextBox Rect_profile_width_second_input = new TextBox();
+
+        // Rectangular profile height dimension first input
+        private TextBox Rect_profile_height_first_input = new TextBox();
+
+        // Rectangular Profile height dimension second input
+        private TextBox Rect_profile_height_second_input = new TextBox();
+
+        
         // Add to current selection input
         private CheckBox Add_to_selection_checkbox = new CheckBox
         {
@@ -284,21 +319,21 @@ namespace VisualARQAdvancedSelector
         }
 
         // Get the type of profile dimension comparison.
-        public int GetProfileDimComparisonType()
+        public int GetRectProfileWidthComparisonType()
         {
-            return Profile_dim_comparison.SelectedIndex;
+            return Rect_profile_width_comparison.SelectedIndex;
         }
 
         // Get the first profile dimension input.
         public string GetFirstProfileDimension()
         {
-            return Profile_dim_first_input.Text;
+            return Rect_profile_width_first_input.Text;
         }
 
         // Get the second profile dimension input.
         public string GetSecondProfileDimension()
         {
-            return Profile_dim_second_input.Text;
+            return Rect_profile_width_second_input.Text;
         }
 
         // Get the add to current selection checkbox
@@ -325,6 +360,40 @@ namespace VisualARQAdvancedSelector
             //{
                 Close(true);
             //}
+        }
+
+        private void SelectedProfileTemplatesHandler<TEventArgs>(object sender, TEventArgs e)
+        {
+            IEnumerable<int> selectedRows = Profile_templates_list.SelectedRows;
+
+            if (selectedRows.Contains(Profile_template_names_indexes["Rectangular"]))  // TODO crear un Dictionary<Rectangular, 0> para hacer Contains(Dictionary.Rect)
+            {
+                //Rectangular_profile_dim_group.Visible = true;
+                Rectangular_profile_dim_group.Enabled = true;
+            }
+            else
+            {
+                //Rectangular_profile_dim_group.Visible = false;
+                Rectangular_profile_dim_group.Enabled = false;
+            }
+
+
+
+            foreach (int x in selectedRows)
+            {
+                // Use List.Contains() instead?
+                //if (Profile_template_names[x] == "Rectangular")
+                //{
+                //    Rectangular_profile_dim_group.Visible = false;
+                //}
+                //else
+                //{
+                //    Rectangular_profile_dim_group.Visible = false;
+                //}
+                Rhino.RhinoApp.WriteLine(x.ToString());
+            }
+            // TODO Hide or show depending on the values...
+            // If one of the added has name Rectangular show the group otherwise hide it.
         }
     }
 }
