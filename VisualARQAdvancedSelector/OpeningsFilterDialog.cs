@@ -21,6 +21,12 @@ namespace VisualARQAdvancedSelector
         public Guid Id { get; set; }
     }
 
+    class DropDownEntry
+    {
+        public string Text { get; set; }
+        public string Value { get; set; }
+    }
+
     public class OpeningsFilterDialog : Dialog<bool>
     {
         public OpeningsFilterDialog()
@@ -129,7 +135,8 @@ namespace VisualARQAdvancedSelector
 
             // Add the dropdowns event listeners
             Rect_profile_width_comparison.DropDownClosed += SelectedRectProfileWidthComparisonType;
-            // TODO... also rect height and circ radius
+            Rect_profile_height_comparison.DropDownClosed += SelectedRectProfileHeightComparisonType;
+            Circ_profile_radius_comparison.DropDownClosed += SelectedCircProfileRadiusComparisonType;
 
             // Table layout to add all the controls.
             DynamicLayout layout = new DynamicLayout
@@ -174,6 +181,14 @@ namespace VisualARQAdvancedSelector
         }
 
         private string[] Structural_profiles = new string[6] { "Circular Hollow", "I Shape", "L Shape", "Rectangular Hollow", "T Shape", "U Shape" };
+
+        private static DropDownEntry[] Numerical_comparison_options = new DropDownEntry[4]
+        {
+            new DropDownEntry { Text = "is equal to", Value = "isEqualTo" },
+            new DropDownEntry { Text = "is less than", Value = "isLessThan" },
+            new DropDownEntry { Text = "is greater than", Value = "isGreaterThan" },
+            new DropDownEntry { Text = "is between", Value = "isBetween" }
+        };
 
         // Object type label
         private Label Object_type_label = new Label
@@ -247,14 +262,18 @@ namespace VisualARQAdvancedSelector
         // Rectangular profile width dimension comparison
         private DropDown Rect_profile_width_comparison = new DropDown
         {
-            DataStore = new string[4] { "is equal to", "is less than", "is greater than", "is between" },
+            DataStore = Numerical_comparison_options,
+            ItemTextBinding = Binding.Property<DropDownEntry, string>(r => r.Text),
+            ItemKeyBinding = Binding.Property<DropDownEntry, string>(r => r.Value),
             SelectedIndex = 0
         };
 
         // Rectangular profile height dimension comparison
         private DropDown Rect_profile_height_comparison = new DropDown
         {
-            DataStore = new string[4] { "is equal to", "is less than", "is greater than", "is between" },
+            DataStore = Numerical_comparison_options,
+            ItemTextBinding = Binding.Property<DropDownEntry, string>(r => r.Text),
+            ItemKeyBinding = Binding.Property<DropDownEntry, string>(r => r.Value),
             SelectedIndex = 0
         };
 
@@ -289,7 +308,9 @@ namespace VisualARQAdvancedSelector
         // Ciruclar profile radius dimension comparison
         private DropDown Circ_profile_radius_comparison = new DropDown
         {
-            DataStore = new string[4] { "is equal to", "is less than", "is greater than", "is between" },
+            DataStore = Numerical_comparison_options,
+            ItemTextBinding = Binding.Property<DropDownEntry, string>(r => r.Text),
+            ItemKeyBinding = Binding.Property<DropDownEntry, string>(r => r.Value),
             SelectedIndex = 0
         };
 
@@ -363,9 +384,9 @@ namespace VisualARQAdvancedSelector
         }
 
         // Gets the rectangular profile width type of dimension comparison.
-        public int GetRectProfileWidthComparisonType()
+        public string GetRectProfileWidthComparisonType()
         {
-            return Rect_profile_width_comparison.SelectedIndex;
+            return Rect_profile_width_comparison.SelectedKey;
         }
 
         // Gets the rectangular profile width first input.
@@ -380,10 +401,28 @@ namespace VisualARQAdvancedSelector
             return Rect_profile_width_second_input.Text;
         }
 
-        // Gets the circular profile radius type of dimension comparison.
-        public int GetCircProfileRadiusComparisonType()
+        // Gets the rectangular profile height type of dimension comparison.
+        public string GetRectProfileHeightComparisonType()
         {
-            return Circ_profile_radius_comparison.SelectedIndex;
+            return Rect_profile_height_comparison.SelectedKey;
+        }
+
+        // Gets the rectangular profile height first input.
+        public string GetRectProfileHeightFirstDimension()
+        {
+            return Rect_profile_height_first_input.Text;
+        }
+
+        // Gets the rectangular profile height second input.
+        public string GetRectProfileHeightSecondDimension()
+        {
+            return Rect_profile_height_second_input.Text;
+        }
+
+        // Gets the circular profile radius type of dimension comparison.
+        public string GetCircProfileRadiusComparisonType()
+        {
+            return Circ_profile_radius_comparison.SelectedKey;
         }
 
         // Gets the circular profile radius first input.
@@ -450,14 +489,17 @@ namespace VisualARQAdvancedSelector
 
         private void SelectedRectProfileWidthComparisonType<TEventArgs>(object sender, TEventArgs e)
         {
-            if (GetRectProfileWidthComparisonType() == 3) // 3 must correspond to the "between" option
-                Rect_profile_width_second_input.Enabled = true;
-            else
-                Rect_profile_width_second_input.Enabled = false;
+            Rect_profile_width_second_input.Enabled = GetRectProfileWidthComparisonType() == "isBetween" ? true : false;
         }
 
-        // private void SelectedRectProfileHeightComparisonType
+        private void SelectedRectProfileHeightComparisonType<TEventArgs>(object sender, TEventArgs e)
+        {
+            Rect_profile_height_second_input.Enabled = GetRectProfileHeightComparisonType() == "isBetween" ? true : false;
+        }
 
-        // private void SelectedCircProfileRadiusComparisonType
+        private void SelectedCircProfileRadiusComparisonType<TEventArgs>(object sender, TEventArgs e)
+        {
+            Circ_profile_radius_second_input.Enabled = GetCircProfileRadiusComparisonType() == "isBetween" ? true : false;
+        }
     }
 }
