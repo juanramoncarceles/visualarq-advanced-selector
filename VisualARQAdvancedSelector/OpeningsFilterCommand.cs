@@ -45,34 +45,47 @@ namespace VisualARQAdvancedSelector
                 bool? includeDoors = ofd.IncludeDoorType();
 
                 List<Guid> selectedWindowStyles;
+                List<Guid> selectedDoorStyles;
+
+                List<Guid> selectedProfileTemplates = ofd.GetSelectedProfileTemplates();
+
                 if (includeWindows == true)
                 {
-                    RhinoApp.WriteLine("Windows included");
                     selectedWindowStyles = ofd.GetSelectedWindowStyles();
-                    if (selectedWindowStyles.Count > 0)
+                    if (selectedWindowStyles.Count > 0 && selectedProfileTemplates.Count == 0)
                     {
-                        RhinoApp.WriteLine("Selected window styles");
-                        foreach (var s in selectedWindowStyles)
-                        {
-                            RhinoApp.WriteLine(s.ToString());
-                        }
+                        // GetProductByStyle() can be useful?
                         matched.AddRange(rhobjs.Where(rhobj => IsWindow(rhobj.Id) && selectedWindowStyles.Contains(GetProductStyle(rhobj.Id))));
                     }
+                    else if (selectedWindowStyles.Count > 0 && selectedProfileTemplates.Count > 0)
+                    {
+                        matched.AddRange(rhobjs.Where(rhobj =>
+                            IsWindow(rhobj.Id) &&
+                            selectedWindowStyles.Contains(GetProductStyle(rhobj.Id)) &&
+                            selectedProfileTemplates.Contains(GetOpeningStyleProfileTemplate(GetProductStyle(rhobj.Id)))));
+                    }
+                    // TODO If rectangular template is selected check the values of the dropdown and the inputs.   if (IsRectangularSelected()) {  }
+                    // TODO If circular is selected check the values of the dropdown and the inputs   if (IsCircularSelected()) {  }
                 }
 
-                List<Guid> selectedDoorStyles;
                 if (includeDoors == true)
                 {
                     selectedDoorStyles = ofd.GetSelectedDoorStyles();
-                    if (selectedDoorStyles.Count > 0)
+                    if (selectedDoorStyles.Count > 0 && selectedProfileTemplates.Count == 0)
                     {
                         matched.AddRange(rhobjs.Where(rhobj => IsDoor(rhobj.Id) && selectedDoorStyles.Contains(GetProductStyle(rhobj.Id))));
+                    }
+                    else if (selectedDoorStyles.Count > 0 && selectedProfileTemplates.Count > 0)
+                    {
+                        matched.AddRange(rhobjs.Where(rhobj =>
+                            IsDoor(rhobj.Id) &&
+                            selectedDoorStyles.Contains(GetProductStyle(rhobj.Id)) &&
+                            selectedProfileTemplates.Contains(GetOpeningStyleProfileTemplate(GetProductStyle(rhobj.Id)))));
                     }
                 }
 
                 // TODO profile template and dimensions...
-                // List<Guid> selectedProfileTemplates = dialog.GetSelectedProfileTemplates();
-
+                
                 //dialog.GetRectProfileWidthComparisonType();
 
                 // profile dimensions
@@ -81,7 +94,7 @@ namespace VisualARQAdvancedSelector
 
 
                 
-                // Select all the ones that matched.
+                // Set as selected all the ones that matched.
                 if (matched.Count > 0)
                 {
                     if (ofd.GetAddToSelection() == null || ofd.GetAddToSelection() == false)
