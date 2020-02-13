@@ -240,7 +240,7 @@ namespace VisualARQAdvancedSelector
         // Rectangular profile template dimensions group.
         private GroupBox Profile_dim_inputs_group = new GroupBox
         {
-            Text = "Rectangular profile dimensions",
+            Text = "Profile dimensions",
             Padding = 5
         };
 
@@ -277,32 +277,32 @@ namespace VisualARQAdvancedSelector
         };
 
         // Rectangular profile width dimension first input
-        private TextBox Profile_width_first_input = new TextBox();
+        private NumericStepper Profile_width_first_input = new NumericStepper();
 
         // Rectangular profile width dimension second input
-        private TextBox Profile_width_second_input = new TextBox();
+        private NumericStepper Profile_width_second_input = new NumericStepper();
 
         // Rectangular profile height dimension first input
-        private TextBox Profile_height_first_input = new TextBox();
+        private NumericStepper Profile_height_first_input = new NumericStepper();
 
         // Rectangular Profile height dimension second input
-        private TextBox Profile_height_second_input = new TextBox();
+        private NumericStepper Profile_height_second_input = new NumericStepper();
 
         // CIRCULAR PROFILE
 
         // Circular profile template dimensions group.
-        private GroupBox Circular_profile_dim_group = new GroupBox
-        {
-            Text = "Circular profile dimensions",
-            Padding = 5
-        };
+        //private GroupBox Circular_profile_dim_group = new GroupBox
+        //{
+        //    Text = "Circular profile dimensions",
+        //    Padding = 5
+        //};
 
         // Rectangular profile radius dimension label
-        private Label Circ_profile_radius_label = new Label
-        {
-            Text = "Radius",
-            VerticalAlignment = VerticalAlignment.Center
-        };
+        //private Label Circ_profile_radius_label = new Label
+        //{
+        //    Text = "Radius",
+        //    VerticalAlignment = VerticalAlignment.Center
+        //};
 
         // Ciruclar profile radius dimension comparison
         //private DropDown Circ_profile_radius_comparison = new DropDown
@@ -317,7 +317,7 @@ namespace VisualARQAdvancedSelector
         //private TextBox Circ_profile_radius_first_input = new TextBox();
 
         // Circular profile radius dimension second input
-        private TextBox Circ_profile_radius_second_input = new TextBox();
+        //private TextBox Circ_profile_radius_second_input = new TextBox();
 
         // ADD TO SELECTION
 
@@ -382,41 +382,57 @@ namespace VisualARQAdvancedSelector
             return profileTemplateIds;
         }
 
-        // Gets the rectangular profile width type of dimension comparison.
+        // Gets the profile width type of dimension comparison.
         public string GetWidthComparisonType()
         {
             return Profile_width_comparison.SelectedKey;
         }
 
-        // Gets the rectangular profile width first input.
-        public string GetWidthFirstInputValue()
+        // Gets the profile width first input.
+        public double GetWidthFirstInputValue()
         {
-            return Profile_width_first_input.Text;
+            //Profile_width_first_input.Value
+            return Profile_width_first_input.Value;
         }
 
-        // Get the rectangular profile width second input.
-        public string GetWidthSecondInputValue()
+        // Get the profile width second input.
+        public double GetWidthSecondInputValue()
         {
-            return Profile_width_second_input.Text;
+            return Profile_width_second_input.Value;
         }
 
-        // Gets the rectangular profile height type of dimension comparison.
+        // Gets the profile height type of dimension comparison.
         public string GetHeightComparisonType()
         {
             return Profile_height_comparison.SelectedKey;
         }
 
-        // Gets the rectangular profile height first input.
-        public string GetHeightFirstInputValue()
+        // Gets the profile height first input.
+        public double GetHeightFirstInputValue()
         {
-            return Profile_height_first_input.Text;
+            return Profile_height_first_input.Value;
         }
 
-        // Gets the rectangular profile height second input.
-        public string GetHeightSecondInputValue()
+        // Gets the profile height second input.
+        public double GetHeightSecondInputValue()
         {
-            return Profile_height_second_input.Text;
+            return Profile_height_second_input.Value;
         }
+
+        public bool CheckWidthDimension()
+        {
+            if (Profile_width_first_input.Value != 0 && (GetWidthComparisonType() == "IsBetween" && Profile_width_second_input.Value != 0)) // revisar esto...
+                return true;
+            else
+                return false;
+        }
+
+        public bool CheckHeightDimension()
+        {
+            // TODO
+            return true;
+        }
+        
 
         // Gets the circular profile radius type of dimension comparison.
         //public string GetCircProfileRadiusComparisonType()
@@ -479,21 +495,21 @@ namespace VisualARQAdvancedSelector
             else
                 Profile_dim_inputs_group.Enabled = false;
 
-            if (selectedItems.Any(i => ((ImageTextItem)i).Text == "Circular"))
-                Circular_profile_dim_group.Enabled = true;
-            else
-                Circular_profile_dim_group.Enabled = false;
+            //if (selectedItems.Any(i => ((ImageTextItem)i).Text == "Circular"))
+            //    Circular_profile_dim_group.Enabled = true;
+            //else
+            //    Circular_profile_dim_group.Enabled = false;
             
         }
 
         private void ProfileWidthComparisonType<TEventArgs>(object sender, TEventArgs e)
         {
-            Profile_width_second_input.Enabled = GetWidthComparisonType() == "isBetween" ? true : false;
+            Profile_width_second_input.Visible = GetWidthComparisonType() == "isBetween" ? true : false;
         }
 
         private void ProfileHeightComparisonType<TEventArgs>(object sender, TEventArgs e)
         {
-            Profile_height_second_input.Enabled = GetHeightComparisonType() == "isBetween" ? true : false;
+            Profile_height_second_input.Visible = GetHeightComparisonType() == "isBetween" ? true : false;
         }
 
         //private void SelectedCircProfileRadiusComparisonType<TEventArgs>(object sender, TEventArgs e)
