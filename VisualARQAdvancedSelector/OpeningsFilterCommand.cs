@@ -28,6 +28,49 @@ namespace VisualARQAdvancedSelector
             get { return "vaexOpeningsFilter"; }
         }
 
+        private Guid GetOpeningProfileTemplate(Guid openingId)
+        {
+            return GetOpeningStyleProfileTemplate(GetProductStyle(openingId));
+        }
+
+        private bool OpeningProfileMatchesWidth(OpeningsFilterDialog dialog, Guid openingId)
+        {
+            Guid profileTypeId = GetOpeningProfileTemplate(openingId);
+            if (profileTypeId == rectangularTemplateId)
+            {
+                if (dialog.GetWidthComparisonType() == "isEqualTo" && GetRectangularProfileWidth(openingId) == dialog.GetWidthFirstInputValue())
+                    return true;
+                else if (dialog.GetWidthComparisonType() == "isLessThan" && GetRectangularProfileWidth(openingId) < dialog.GetWidthFirstInputValue())
+                    return true;
+                else if (dialog.GetWidthComparisonType() == "isGreaterThan" && GetRectangularProfileWidth(openingId) > dialog.GetWidthFirstInputValue())
+                    return true;
+                else if (dialog.GetWidthComparisonType() == "isBetween" && GetRectangularProfileWidth(openingId) > dialog.GetWidthFirstInputValue() && GetRectangularProfileWidth(openingId) < dialog.GetWidthSecondInputValue())
+                    return true;
+                else
+                    return false;
+            }
+            else if (profileTypeId == circularTemplateId)
+            {
+                if (dialog.GetWidthComparisonType() == "isEqualTo" && GetCircularProfileDiameter(openingId) == dialog.GetWidthFirstInputValue())
+                    return true;
+                else if (dialog.GetWidthComparisonType() == "isLessThan" && GetCircularProfileDiameter(openingId) < dialog.GetWidthFirstInputValue())
+                    return true;
+                else if (dialog.GetWidthComparisonType() == "isGreaterThan" && GetCircularProfileDiameter(openingId) > dialog.GetWidthFirstInputValue())
+                    return true;
+                else if (dialog.GetWidthComparisonType() == "isBetween" && GetCircularProfileDiameter(openingId) > dialog.GetWidthFirstInputValue() && GetCircularProfileDiameter(openingId) < dialog.GetWidthSecondInputValue())
+                    return true;
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+
+        private bool OpeningProfileMatchesHeight(OpeningsFilterDialog dialog, Guid openingId)
+        {
+            // Same as above but with height
+        }
+
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
             OpeningsFilterDialog ofd = new OpeningsFilterDialog();
@@ -85,12 +128,47 @@ namespace VisualARQAdvancedSelector
                 }
 
                 // TODO profile template and dimensions...
-                
+
                 //dialog.GetRectProfileWidthComparisonType();
 
                 // profile dimensions
                 //VisualARQ.Script.GetOpeningProfile()
                 //VisualARQ.Script.GetOpeningStyleProfileTemplate()
+
+
+
+
+                // SECOND VERSION HERE
+                selectedWindowStyles = ofd.GetSelectedWindowStyles();
+                selectedDoorStyles = ofd.GetSelectedDoorStyles();
+                bool IncludeWindows = selectedWindowStyles.Count > 0;
+                bool IncludeDoors = selectedDoorStyles.Count > 0;
+                foreach (Rhino.DocObjects.RhinoObject rhobj in rhobjs)
+                {
+                    if ((IncludeWindows && IsWindow(rhobj.Id) && selectedWindowStyles.Contains(GetProductStyle(rhobj.Id))) ||
+                        (IncludeDoors && IsDoor(rhobj.Id) && selectedDoorStyles.Contains(GetProductStyle(rhobj.Id))))
+                    {
+                        if (selectedProfileTemplates.Contains(GetOpeningProfileTemplate(rhobj.Id)))
+                        {
+                            if (checkDimensions) // mira si hay valor en el primer input o si a opcion es between en los dos, en por lo menos la anchura o la altura
+                            {
+                                if (checkWidthDimension && OpeningProfileMatchesWidth(ofd, rhobj.Id)) // mira el tipo de perfil y comprueba su anchura.
+                                {
+                                    matched.Add(rhobj);
+                                }
+                                else if (checkHeightDimension && OpeningProfileMatchesHeight(ofd, rhobj.Id)) // mira el tipo de perfil y comprueba su altura. 
+                                {
+                                    matched.Add(rhobj);
+                                }
+                            }
+                            else
+                            {
+                                matched.Add(rhobj);
+                            }
+                        }
+                    }
+                }
+
 
 
                 

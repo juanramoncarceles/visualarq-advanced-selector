@@ -89,7 +89,7 @@ namespace VisualARQAdvancedSelector
 
             // Profile templates list
             Guid[] profileTemplateIds = GetProfileTemplates();
-            List<ImageTextItem> profileTemplateNames = new List<ImageTextItem>();
+            List<ImageTextItem> profileTemplateItems = new List<ImageTextItem>();
             foreach (Guid profileTemplateId in profileTemplateIds)
             {
                 string profileName = GetProfileName(profileTemplateId);
@@ -98,22 +98,22 @@ namespace VisualARQAdvancedSelector
                     switch (profileName)
                     {
                         case "Rectangular":
-                            profileTemplateNames.Add(new ImageTextItem { Text = profileName, Image = Rect_profile, Id = profileTemplateId });
+                            profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Rect_profile, Id = profileTemplateId });
                             break;
                         case "Circular":
-                            profileTemplateNames.Add(new ImageTextItem { Text = profileName, Image = Round_profile, Id = profileTemplateId });
+                            profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Round_profile, Id = profileTemplateId });
                             break;
-                        //case "Romanic":
-                        //    profileTemplateNames.Add(new ImageTextItem { Text = profileName, Image = Romanic_profile, Id = profileTemplateId });
-                        //    break;
-                        //case "Gothic":
-                        //    profileTemplateNames.Add(new ImageTextItem { Text = profileName, Image = Gothic_profile, Id = profileTemplateId });
-                        //    break;
-                        //case "90º Arc":
-                        //    profileTemplateNames.Add(new ImageTextItem { Text = profileName, Image = Arch90_profile, Id = profileTemplateId });
-                        //    break;
+                        case "Romanic":
+                            profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Romanic_profile, Id = profileTemplateId });
+                            break;
+                        case "Gothic":
+                            profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Gothic_profile, Id = profileTemplateId });
+                            break;
+                        case "90º Arc":
+                            profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Arch90_profile, Id = profileTemplateId });
+                            break;
                         default:
-                            profileTemplateNames.Add(new ImageTextItem { Text = profileName, Image = Custom_profile, Id = profileTemplateId });
+                            profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Custom_profile, Id = profileTemplateId });
                             break;
                     }
                     Rhino.RhinoApp.WriteLine(GetProfileName(profileTemplateId)); // Temp
@@ -123,7 +123,7 @@ namespace VisualARQAdvancedSelector
             Profile_templates_list.Height = 150;
             Profile_templates_list.ShowHeader = false;
             Profile_templates_list.SelectedRowsChanged += SelectedProfileTemplatesHandler;
-            Profile_templates_list.DataStore = profileTemplateNames;
+            Profile_templates_list.DataStore = profileTemplateItems;
             Profile_templates_list.Columns.Add(new GridColumn
             {
                 DataCell = new ImageTextCell
@@ -134,9 +134,9 @@ namespace VisualARQAdvancedSelector
             });
 
             // Add the dropdowns event listeners
-            Rect_profile_width_comparison.DropDownClosed += SelectedRectProfileWidthComparisonType;
-            Rect_profile_height_comparison.DropDownClosed += SelectedRectProfileHeightComparisonType;
-            Circ_profile_radius_comparison.DropDownClosed += SelectedCircProfileRadiusComparisonType;
+            Profile_width_comparison.DropDownClosed += ProfileWidthComparisonType;
+            Profile_height_comparison.DropDownClosed += ProfileHeightComparisonType;
+            //Circ_profile_radius_comparison.DropDownClosed += SelectedCircProfileRadiusComparisonType;
 
             // Table layout to add all the controls.
             DynamicLayout layout = new DynamicLayout
@@ -145,8 +145,8 @@ namespace VisualARQAdvancedSelector
                 Padding = new Padding(10),
             };
             layout.BeginVertical();
-            layout.AddRow(Object_type_label);
-            layout.AddRow(Add_windows_checkbox, Add_doors_checkbox);
+            //layout.AddRow(Object_type_label);
+            layout.AddRow(Include_all_window_styles, Include_all_door_styles);
             layout.EndVertical();
             layout.BeginVertical();
             layout.AddRow(Styles_label);
@@ -157,21 +157,21 @@ namespace VisualARQAdvancedSelector
             layout.AddRow(Profile_templates_list);
             layout.EndVertical();
             layout.BeginVertical();
-            DynamicLayout rectProfileGroup = new DynamicLayout
+            DynamicLayout profileDimensionsInputsGroup = new DynamicLayout
             {
                 Spacing = new Size(8, 8)
             };
-            rectProfileGroup.AddRow(Rect_profile_width_label, Rect_profile_width_comparison, Rect_profile_width_first_input, Rect_profile_width_second_input);
-            rectProfileGroup.AddRow(Rect_profile_height_label, Rect_profile_height_comparison, Rect_profile_height_first_input, Rect_profile_height_second_input);
-            Rectangular_profile_dim_group.Content = rectProfileGroup;
-            layout.AddRow(Rectangular_profile_dim_group);
-            DynamicLayout circProfileGroup = new DynamicLayout
-            {
-                Spacing = new Size(8, 8)
-            };
-            circProfileGroup.AddRow(Circ_profile_radius_label, Circ_profile_radius_comparison, Circ_profile_radius_first_input, Circ_profile_radius_second_input);
-            Circular_profile_dim_group.Content = circProfileGroup;
-            layout.AddRow(Circular_profile_dim_group);
+            profileDimensionsInputsGroup.AddRow(Profile_width_label, Profile_width_comparison, Profile_width_first_input, Profile_width_second_input);
+            profileDimensionsInputsGroup.AddRow(Profile_height_label, Profile_height_comparison, Profile_height_first_input, Profile_height_second_input);
+            Profile_dim_inputs_group.Content = profileDimensionsInputsGroup;
+            layout.AddRow(Profile_dim_inputs_group);
+            //DynamicLayout circProfileGroup = new DynamicLayout
+            //{
+            //    Spacing = new Size(8, 8)
+            //};
+            //circProfileGroup.AddRow(Circ_profile_radius_label, Circ_profile_radius_comparison, Circ_profile_radius_first_input, Circ_profile_radius_second_input);
+            //Circular_profile_dim_group.Content = circProfileGroup;
+            //layout.AddRow(Circular_profile_dim_group);
             layout.EndVertical();
             layout.BeginVertical();
             layout.AddRow(Add_to_selection_checkbox);
@@ -191,24 +191,24 @@ namespace VisualARQAdvancedSelector
         };
 
         // Object type label
-        private Label Object_type_label = new Label
-        {
-            Text = "Object type",
-            Height = 20,
-            ToolTip = "Choose the opening type you would like to include in the search."
-        };
+        //private Label Object_type_label = new Label
+        //{
+        //    Text = "Object type",
+        //    Height = 20,
+        //    ToolTip = "Choose the opening type you would like to include in the search."
+        //};
 
         // Add windows input
-        private CheckBox Add_windows_checkbox = new CheckBox
+        private CheckBox Include_all_window_styles = new CheckBox
         {
-            Text = "Windows",
+            Text = "Include all",
             Checked = true
         };
 
         // Add doors input
-        private CheckBox Add_doors_checkbox = new CheckBox
+        private CheckBox Include_all_door_styles = new CheckBox
         {
-            Text = "Doors",
+            Text = "Include all",
             Checked = true
         };
 
@@ -233,34 +233,33 @@ namespace VisualARQAdvancedSelector
         };
 
         // Profile templates grid container.
-        GridView Profile_templates_list = new GridView();
-
+        private GridView Profile_templates_list = new GridView();
 
         // RECTANGULAR PROFILE
 
         // Rectangular profile template dimensions group.
-        private GroupBox Rectangular_profile_dim_group = new GroupBox
+        private GroupBox Profile_dim_inputs_group = new GroupBox
         {
             Text = "Rectangular profile dimensions",
             Padding = 5
         };
 
         // Rectangular profile width dimension label
-        private Label Rect_profile_width_label = new Label
+        private Label Profile_width_label = new Label
         {
             Text = "Width",
             VerticalAlignment = VerticalAlignment.Center            
         };
 
         // Rectangular profile height dimension label
-        private Label Rect_profile_height_label = new Label
+        private Label Profile_height_label = new Label
         {
             Text = "Heigh",
             VerticalAlignment = VerticalAlignment.Center
         };
 
         // Rectangular profile width dimension comparison
-        private DropDown Rect_profile_width_comparison = new DropDown
+        private DropDown Profile_width_comparison = new DropDown
         {
             DataStore = Numerical_comparison_options,
             ItemTextBinding = Binding.Property<DropDownEntry, string>(r => r.Text),
@@ -269,7 +268,7 @@ namespace VisualARQAdvancedSelector
         };
 
         // Rectangular profile height dimension comparison
-        private DropDown Rect_profile_height_comparison = new DropDown
+        private DropDown Profile_height_comparison = new DropDown
         {
             DataStore = Numerical_comparison_options,
             ItemTextBinding = Binding.Property<DropDownEntry, string>(r => r.Text),
@@ -278,16 +277,16 @@ namespace VisualARQAdvancedSelector
         };
 
         // Rectangular profile width dimension first input
-        private TextBox Rect_profile_width_first_input = new TextBox();
+        private TextBox Profile_width_first_input = new TextBox();
 
         // Rectangular profile width dimension second input
-        private TextBox Rect_profile_width_second_input = new TextBox();
+        private TextBox Profile_width_second_input = new TextBox();
 
         // Rectangular profile height dimension first input
-        private TextBox Rect_profile_height_first_input = new TextBox();
+        private TextBox Profile_height_first_input = new TextBox();
 
         // Rectangular Profile height dimension second input
-        private TextBox Rect_profile_height_second_input = new TextBox();
+        private TextBox Profile_height_second_input = new TextBox();
 
         // CIRCULAR PROFILE
 
@@ -306,16 +305,16 @@ namespace VisualARQAdvancedSelector
         };
 
         // Ciruclar profile radius dimension comparison
-        private DropDown Circ_profile_radius_comparison = new DropDown
-        {
-            DataStore = Numerical_comparison_options,
-            ItemTextBinding = Binding.Property<DropDownEntry, string>(r => r.Text),
-            ItemKeyBinding = Binding.Property<DropDownEntry, string>(r => r.Value),
-            SelectedIndex = 0
-        };
+        //private DropDown Circ_profile_radius_comparison = new DropDown
+        //{
+        //    DataStore = Numerical_comparison_options,
+        //    ItemTextBinding = Binding.Property<DropDownEntry, string>(r => r.Text),
+        //    ItemKeyBinding = Binding.Property<DropDownEntry, string>(r => r.Value),
+        //    SelectedIndex = 0
+        //};
 
         // Circular profile radius dimension first input
-        private TextBox Circ_profile_radius_first_input = new TextBox();
+        //private TextBox Circ_profile_radius_first_input = new TextBox();
 
         // Circular profile radius dimension second input
         private TextBox Circ_profile_radius_second_input = new TextBox();
@@ -335,13 +334,13 @@ namespace VisualARQAdvancedSelector
         // Check if windows should be included.
         public bool? IncludeWindowType()
         {
-            return Add_windows_checkbox.Checked;
+            return Include_all_window_styles.Checked;
         }
 
         // Check if doors should be included.
         public bool? IncludeDoorType()
         {
-            return Add_doors_checkbox.Checked;
+            return Include_all_door_styles.Checked;
         }
 
         /// <summary>
@@ -384,58 +383,58 @@ namespace VisualARQAdvancedSelector
         }
 
         // Gets the rectangular profile width type of dimension comparison.
-        public string GetRectProfileWidthComparisonType()
+        public string GetWidthComparisonType()
         {
-            return Rect_profile_width_comparison.SelectedKey;
+            return Profile_width_comparison.SelectedKey;
         }
 
         // Gets the rectangular profile width first input.
-        public string GetRectProfileWidthFirstDimension()
+        public string GetWidthFirstInputValue()
         {
-            return Rect_profile_width_first_input.Text;
+            return Profile_width_first_input.Text;
         }
 
         // Get the rectangular profile width second input.
-        public string GetRectProfileWidthSecondDimension()
+        public string GetWidthSecondInputValue()
         {
-            return Rect_profile_width_second_input.Text;
+            return Profile_width_second_input.Text;
         }
 
         // Gets the rectangular profile height type of dimension comparison.
-        public string GetRectProfileHeightComparisonType()
+        public string GetHeightComparisonType()
         {
-            return Rect_profile_height_comparison.SelectedKey;
+            return Profile_height_comparison.SelectedKey;
         }
 
         // Gets the rectangular profile height first input.
-        public string GetRectProfileHeightFirstDimension()
+        public string GetHeightFirstInputValue()
         {
-            return Rect_profile_height_first_input.Text;
+            return Profile_height_first_input.Text;
         }
 
         // Gets the rectangular profile height second input.
-        public string GetRectProfileHeightSecondDimension()
+        public string GetHeightSecondInputValue()
         {
-            return Rect_profile_height_second_input.Text;
+            return Profile_height_second_input.Text;
         }
 
         // Gets the circular profile radius type of dimension comparison.
-        public string GetCircProfileRadiusComparisonType()
-        {
-            return Circ_profile_radius_comparison.SelectedKey;
-        }
+        //public string GetCircProfileRadiusComparisonType()
+        //{
+        //    return Circ_profile_radius_comparison.SelectedKey;
+        //}
 
         // Gets the circular profile radius first input.
-        public string GetCircProfileRadiusFirstDimension()
-        {
-            return Circ_profile_radius_first_input.Text;
-        }
+        //public string GetCircProfileRadiusFirstDimension()
+        //{
+        //    return Circ_profile_radius_first_input.Text;
+        //}
 
         // Gets the circular profile radius second input.
-        public string GetCircProfileRadiusSecondDimension()
-        {
-            return Circ_profile_radius_second_input.Text;
-        }
+        //public string GetCircProfileRadiusSecondDimension()
+        //{
+        //    return Circ_profile_radius_second_input.Text;
+        //}
 
         // Get the add to current selection checkbox
         public bool? GetAddToSelection()
@@ -476,9 +475,9 @@ namespace VisualARQAdvancedSelector
             IEnumerable<object> selectedItems = Profile_templates_list.SelectedItems;
             
             if (selectedItems.Any(i => ((ImageTextItem)i).Text == "Rectangular"))
-                Rectangular_profile_dim_group.Enabled = true;
+                Profile_dim_inputs_group.Enabled = true;
             else
-                Rectangular_profile_dim_group.Enabled = false;
+                Profile_dim_inputs_group.Enabled = false;
 
             if (selectedItems.Any(i => ((ImageTextItem)i).Text == "Circular"))
                 Circular_profile_dim_group.Enabled = true;
@@ -487,19 +486,19 @@ namespace VisualARQAdvancedSelector
             
         }
 
-        private void SelectedRectProfileWidthComparisonType<TEventArgs>(object sender, TEventArgs e)
+        private void ProfileWidthComparisonType<TEventArgs>(object sender, TEventArgs e)
         {
-            Rect_profile_width_second_input.Enabled = GetRectProfileWidthComparisonType() == "isBetween" ? true : false;
+            Profile_width_second_input.Enabled = GetWidthComparisonType() == "isBetween" ? true : false;
         }
 
-        private void SelectedRectProfileHeightComparisonType<TEventArgs>(object sender, TEventArgs e)
+        private void ProfileHeightComparisonType<TEventArgs>(object sender, TEventArgs e)
         {
-            Rect_profile_height_second_input.Enabled = GetRectProfileHeightComparisonType() == "isBetween" ? true : false;
+            Profile_height_second_input.Enabled = GetHeightComparisonType() == "isBetween" ? true : false;
         }
 
-        private void SelectedCircProfileRadiusComparisonType<TEventArgs>(object sender, TEventArgs e)
-        {
-            Circ_profile_radius_second_input.Enabled = GetCircProfileRadiusComparisonType() == "isBetween" ? true : false;
-        }
+        //private void SelectedCircProfileRadiusComparisonType<TEventArgs>(object sender, TEventArgs e)
+        //{
+        //    Circ_profile_radius_second_input.Enabled = GetCircProfileRadiusComparisonType() == "isBetween" ? true : false;
+        //}
     }
 }
