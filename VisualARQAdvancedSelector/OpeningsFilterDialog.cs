@@ -27,6 +27,14 @@ namespace VisualARQAdvancedSelector
         public string Value { get; set; }
     }
 
+    static class ComparisonType
+    {
+        public static string isEqualTo = "isEqualTo";
+        public static string isLessThan = "isLessThan";
+        public static string isGreaterThan = "isGreaterThan";
+        public static string isBetween = "isBetween";
+    }
+
     public class OpeningsFilterDialog : Dialog<bool>
     {
         public OpeningsFilterDialog()
@@ -93,7 +101,7 @@ namespace VisualARQAdvancedSelector
             foreach (Guid profileTemplateId in profileTemplateIds)
             {
                 string profileName = GetProfileName(profileTemplateId);
-                if (!Array.Exists(Structural_profiles, p => p == profileName) && profileName != "Romanic" && profileName != "Gothic" && profileName != "90º Arc") // For now those 3 are skiped
+                if (!Array.Exists(Structural_profiles, p => p == profileName))
                 {
                     switch (profileName)
                     {
@@ -116,7 +124,6 @@ namespace VisualARQAdvancedSelector
                             profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Custom_profile, Id = profileTemplateId });
                             break;
                     }
-                    Rhino.RhinoApp.WriteLine(GetProfileName(profileTemplateId)); // Temp
                 }
             }
             Profile_templates_list.AllowMultipleSelection = true;
@@ -181,13 +188,13 @@ namespace VisualARQAdvancedSelector
         }
 
         private string[] Structural_profiles = new string[6] { "Circular Hollow", "I Shape", "L Shape", "Rectangular Hollow", "T Shape", "U Shape" };
-
+        
         private static DropDownEntry[] Numerical_comparison_options = new DropDownEntry[4]
         {
-            new DropDownEntry { Text = "is equal to", Value = "isEqualTo" },
-            new DropDownEntry { Text = "is less than", Value = "isLessThan" },
-            new DropDownEntry { Text = "is greater than", Value = "isGreaterThan" },
-            new DropDownEntry { Text = "is between", Value = "isBetween" }
+            new DropDownEntry { Text = "is equal to", Value = ComparisonType.isEqualTo },
+            new DropDownEntry { Text = "is less than", Value = ComparisonType.isLessThan },
+            new DropDownEntry { Text = "is greater than", Value = ComparisonType.isGreaterThan },
+            new DropDownEntry { Text = "is between", Value = ComparisonType.isBetween }
         };
 
         // Object type label
@@ -421,7 +428,8 @@ namespace VisualARQAdvancedSelector
 
         public bool CheckWidthDimension()
         {
-            if (Profile_width_first_input.Value != 0 && (GetWidthComparisonType() == "IsBetween" && Profile_width_second_input.Value != 0)) // revisar esto...
+            if ((GetWidthComparisonType() != ComparisonType.isBetween && Profile_width_first_input.Value > 0) ||
+                (GetWidthComparisonType() == ComparisonType.isBetween && (Profile_width_first_input.Value > 0 && Profile_width_second_input.Value > 0)))
                 return true;
             else
                 return false;
@@ -429,8 +437,11 @@ namespace VisualARQAdvancedSelector
 
         public bool CheckHeightDimension()
         {
-            // TODO
-            return true;
+            if ((GetHeightComparisonType() != ComparisonType.isBetween && Profile_height_first_input.Value > 0) ||
+                (GetHeightComparisonType() == ComparisonType.isBetween && (Profile_height_first_input.Value > 0 && Profile_height_second_input.Value > 0)))
+                return true;
+            else
+                return false;
         }
         
 
@@ -504,12 +515,12 @@ namespace VisualARQAdvancedSelector
 
         private void ProfileWidthComparisonType<TEventArgs>(object sender, TEventArgs e)
         {
-            Profile_width_second_input.Visible = GetWidthComparisonType() == "isBetween" ? true : false;
+            Profile_width_second_input.Visible = GetWidthComparisonType() == ComparisonType.isBetween ? true : false;
         }
 
         private void ProfileHeightComparisonType<TEventArgs>(object sender, TEventArgs e)
         {
-            Profile_height_second_input.Visible = GetHeightComparisonType() == "isBetween" ? true : false;
+            Profile_height_second_input.Visible = GetHeightComparisonType() == ComparisonType.isBetween ? true : false;
         }
 
         //private void SelectedCircProfileRadiusComparisonType<TEventArgs>(object sender, TEventArgs e)

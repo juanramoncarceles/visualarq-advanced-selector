@@ -31,6 +31,9 @@ namespace VisualARQAdvancedSelector
         }
 
 
+        // TODO Crear aqui el struct de los perfiles templates o en el dialog?
+
+
         private Guid GetOpeningProfileTemplate(Guid openingId)
         {
             return GetOpeningStyleProfileTemplate(GetProductStyle(openingId));
@@ -71,13 +74,13 @@ namespace VisualARQAdvancedSelector
 
             if (isValidProfileTemplate)
             {
-                if (comparisonType == "isEqualTo" && profileWidth == firstValue)
+                if (comparisonType == ComparisonType.isEqualTo && profileWidth == firstValue)
                     return true;
-                else if (comparisonType == "isLessThan" && profileWidth < firstValue)
+                else if (comparisonType == ComparisonType.isLessThan && profileWidth < firstValue)
                     return true;
-                else if (comparisonType == "isGreaterThan" && profileWidth > firstValue)
+                else if (comparisonType == ComparisonType.isGreaterThan && profileWidth > firstValue)
                     return true;
-                else if (comparisonType == "isBetween" && profileWidth > firstValue && profileWidth < secondValue)
+                else if (comparisonType == ComparisonType.isBetween && profileWidth > firstValue && profileWidth < secondValue)
                     return true;
                 else
                     return false;
@@ -106,6 +109,8 @@ namespace VisualARQAdvancedSelector
 
                 bool includeWindows = selectedWindowStyles.Count > 0;
                 bool includeDoors = selectedDoorStyles.Count > 0;
+
+                RhinoApp.WriteLine("Include " + includeWindows.ToString() + includeDoors.ToString());
 
                 foreach (Rhino.DocObjects.RhinoObject rhobj in rhobjs)
                 {
