@@ -64,7 +64,8 @@ namespace VisualARQAdvancedSelector
             Window_styles_list.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell { Binding = Binding.Property<TextItem, string>(r => r.Text) },
-                HeaderText = "Window Styles"
+                HeaderText = "Window Styles",
+                Width = 174
             });
             Window_styles_list.SelectAll();
 
@@ -81,7 +82,8 @@ namespace VisualARQAdvancedSelector
             Door_styles_list.Columns.Add(new GridColumn
             {
                 DataCell = new TextBoxCell { Binding = Binding.Property<TextItem, string>(r => r.Text) },
-                HeaderText = "Door Styles"
+                HeaderText = "Door Styles",
+                Width = 174
             });
             Door_styles_list.SelectAll();
 
@@ -139,7 +141,7 @@ namespace VisualARQAdvancedSelector
                     ImageBinding = Binding.Property<ImageTextItem, Image>(r => r.Image),
                     TextBinding = Binding.Property<TextItem, string>(r => r.Text)
                 },
-                Width = 150
+                Width = 174
             });
             Profile_templates_list.SelectAll();
 
@@ -234,6 +236,7 @@ namespace VisualARQAdvancedSelector
         {
             Text = "Styles",
             Height = 20,
+            Font = new Font(SystemFont.Bold),
             ToolTip = "Indicate the styles you would like to include in the search. Multiple selection is possible by pressing Ctrl key."
         };
 
