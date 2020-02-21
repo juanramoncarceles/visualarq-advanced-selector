@@ -29,6 +29,7 @@ namespace VisualARQAdvancedSelector
 
     static class ComparisonType
     {
+        public static string none = "all";
         public static string isEqualTo = "isEqualTo";
         public static string isLessThan = "isLessThan";
         public static string isGreaterThan = "isGreaterThan";
@@ -159,6 +160,10 @@ namespace VisualARQAdvancedSelector
             Window_styles_list.SelectedRowsChanged += OnWindowStylesSelectionChanged;
             Door_styles_list.SelectedRowsChanged += OnDoorStylesSelectionChanged;
 
+            // Selection options handler
+            Add_to_selection_checkbox.CheckedChanged += OnAddToSelectionHandler;
+            From_selection_checkbox.CheckedChanged += OnFromSelectionHandler;
+
             // Table layout to add all the controls.
             DynamicLayout layout = new DynamicLayout
             {
@@ -187,15 +192,17 @@ namespace VisualARQAdvancedSelector
             layout.EndVertical();
             layout.BeginVertical();
             layout.AddRow(Add_to_selection_checkbox);
+            layout.AddRow(From_selection_checkbox);
             layout.EndVertical();
             layout.AddSeparateRow(null, DefaultButton, null, AbortButton, null);
             Content = layout;
         }
 
-        private string[] Structural_profiles = new string[6] { "Circular Hollow", "I Shape", "L Shape", "Rectangular Hollow", "T Shape", "U Shape" };
+        private readonly string[] Structural_profiles = new string[6] { "Circular Hollow", "I Shape", "L Shape", "Rectangular Hollow", "T Shape", "U Shape" };
         
-        private static DropDownEntry[] Numerical_comparison_options = new DropDownEntry[4]
+        private static DropDownEntry[] Numerical_comparison_options = new DropDownEntry[5]
         {
+            new DropDownEntry { Text = "all", Value = ComparisonType.none },
             new DropDownEntry { Text = "is equal to", Value = ComparisonType.isEqualTo },
             new DropDownEntry { Text = "is less than", Value = ComparisonType.isLessThan },
             new DropDownEntry { Text = "is greater than", Value = ComparisonType.isGreaterThan },
@@ -232,12 +239,12 @@ namespace VisualARQAdvancedSelector
         };
 
         // Styles label
-        private Label Styles_label = new Label
+        private readonly Label Styles_label = new Label
         {
             Text = "Styles",
             Height = 20,
             Font = new Font(SystemFont.Bold),
-            ToolTip = "Indicate the styles you would like to include in the search. Multiple selection is possible by pressing Ctrl key."
+            ToolTip = "Select all the styles you would like to include in the search."
         };
 
         // Opening styles grid container.
@@ -245,11 +252,12 @@ namespace VisualARQAdvancedSelector
         GridView Door_styles_list = new GridView();
 
         // Profile templates label
-        private Label Profiles_label = new Label
+        private readonly Label Profiles_label = new Label
         {
             Text = "Profiles",
             Height = 20,
-            ToolTip = "Indicate all the profile types that you would like to include in the search. Press the Ctrl key for multiple select."
+            Font = new Font(SystemFont.Bold),
+            ToolTip = "Select all the profile types that you would like to include in the search."
         };
 
         // Profile templates grid container.
@@ -259,18 +267,20 @@ namespace VisualARQAdvancedSelector
         private GroupBox Profile_dim_inputs_group = new GroupBox
         {
             Text = "Profile dimensions",
+            Font = new Font(SystemFont.Bold),
+            ToolTip = "Specify the profile main dimensions.",
             Padding = 5
         };
 
         // Profile width dimension label
-        private Label Profile_width_label = new Label
+        private readonly Label Profile_width_label = new Label
         {
             Text = "Width",
             VerticalAlignment = VerticalAlignment.Center            
         };
 
         // Profile height dimension label
-        private Label Profile_height_label = new Label
+        private readonly Label Profile_height_label = new Label
         {
             Text = "Heigh",
             VerticalAlignment = VerticalAlignment.Center
@@ -295,7 +305,10 @@ namespace VisualARQAdvancedSelector
         };
 
         // Profile width dimension first input
-        private NumericStepper Profile_width_first_input = new NumericStepper();
+        private NumericStepper Profile_width_first_input = new NumericStepper
+        {
+            Enabled = false
+        };
 
         // Profile width dimension second input
         private NumericStepper Profile_width_second_input = new NumericStepper
@@ -304,7 +317,10 @@ namespace VisualARQAdvancedSelector
         };
 
         // Profile height dimension first input
-        private NumericStepper Profile_height_first_input = new NumericStepper();
+        private NumericStepper Profile_height_first_input = new NumericStepper
+        {
+            Enabled = false
+        };
 
         // Profile height dimension second input
         private NumericStepper Profile_height_second_input = new NumericStepper
@@ -322,6 +338,12 @@ namespace VisualARQAdvancedSelector
             Checked = true
         };
 
+        // FROM CURRENT SELECTION
+
+        private CheckBox From_selection_checkbox = new CheckBox
+        {
+            Text = "From current selection"
+        };
 
         // METHODS
 
@@ -423,6 +445,12 @@ namespace VisualARQAdvancedSelector
         public bool? GetAddToSelection()
         {
             return Add_to_selection_checkbox.Checked;
+        }
+
+        // Get the from current selection checkbox
+        public bool? GetFromSelection()
+        {
+            return From_selection_checkbox.Checked;
         }
 
         // Close button click handler
@@ -529,13 +557,53 @@ namespace VisualARQAdvancedSelector
 
         private void ProfileWidthComparisonType<TEventArgs>(object sender, TEventArgs e)
         {
-            Profile_width_second_input.Enabled = GetWidthComparisonType() == ComparisonType.isBetween ? true : false;
+            if (GetWidthComparisonType() == ComparisonType.none)
+            {
+                Profile_width_first_input.Enabled = false;
+                Profile_width_second_input.Enabled = false;
+            }
+            else if (GetWidthComparisonType() == ComparisonType.isBetween)
+            {
+                Profile_width_first_input.Enabled = true;
+                Profile_width_second_input.Enabled = true;
+            }
+            else
+            {
+                Profile_width_first_input.Enabled = true;
+                Profile_width_second_input.Enabled = false;
+            }
         }
 
         private void ProfileHeightComparisonType<TEventArgs>(object sender, TEventArgs e)
         {
-            Profile_height_second_input.Enabled = GetHeightComparisonType() == ComparisonType.isBetween ? true : false;
+            if (GetHeightComparisonType() == ComparisonType.none)
+            {
+                Profile_height_first_input.Enabled = false;
+                Profile_height_second_input.Enabled = false;
+            }
+            else if (GetHeightComparisonType() == ComparisonType.isBetween)
+            {
+                Profile_height_first_input.Enabled = true;
+                Profile_height_second_input.Enabled = true;
+            }
+            else
+            {
+                Profile_height_first_input.Enabled = true;
+                Profile_height_second_input.Enabled = false;
+            }
         }
-        
+
+
+        private void OnAddToSelectionHandler<TEventArgs>(object sender, TEventArgs e)
+        {
+            if (Add_to_selection_checkbox.Checked == true)
+                From_selection_checkbox.Checked = false;
+        }
+
+        private void OnFromSelectionHandler<TEventArgs>(object sender, TEventArgs e)
+        {
+            if (From_selection_checkbox.Checked == true)
+                Add_to_selection_checkbox.Checked = false;
+        }
     }
 }
