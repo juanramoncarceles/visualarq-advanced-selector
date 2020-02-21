@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualARQAdvancedSelector", "VisualARQAdvancedSelector\VisualARQAdvancedSelector.csproj", "{1EF47D9C-BBC6-42E0-B10F-962993645AFA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualARQExtraSelectors", "VisualARQAdvancedSelector\VisualARQExtraSelectors.csproj", "{1EF47D9C-BBC6-42E0-B10F-962993645AFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

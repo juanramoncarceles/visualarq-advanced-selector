@@ -1,4 +1,4 @@
-﻿namespace VisualARQAdvancedSelector
+﻿namespace VisualARQExtraSelectors
 {
     ///<summary>
     /// <para>Every RhinoCommon .rhp assembly must have one and only one PlugIn-derived
@@ -8,16 +8,16 @@
     /// attributes in AssemblyInfo.cs (you might need to click "Project" ->
     /// "Show All Files" to see it in the "Solution Explorer" window).</para>
     ///</summary>
-    public class VisualARQAdvancedSelectorPlugIn : Rhino.PlugIns.PlugIn
+    public class VisualARQExtraSelectorsPlugIn : Rhino.PlugIns.PlugIn
 
     {
-        public VisualARQAdvancedSelectorPlugIn()
+        public VisualARQExtraSelectorsPlugIn()
         {
             Instance = this;
         }
 
         ///<summary>Gets the only instance of the VisualARQAdvancedSelectorPlugIn plug-in.</summary>
-        public static VisualARQAdvancedSelectorPlugIn Instance
+        public static VisualARQExtraSelectorsPlugIn Instance
         {
             get; private set;
         }

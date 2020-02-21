@@ -2,16 +2,13 @@
 using System.Collections.Generic;
 using Rhino;
 using Rhino.Commands;
-using Rhino.Geometry;
-using Rhino.Input;
-using Rhino.Input.Custom;
 using static VisualARQ.Script;
 
-namespace VisualARQAdvancedSelector
+namespace VisualARQExtraSelectors
 {
-    public class VisualARQAdvancedSelectorCommand : Command
+    public class ParametersSelectorCommand : Command
     {
-        public VisualARQAdvancedSelectorCommand()
+        public ParametersSelectorCommand()
         {
             // Rhino only creates one instance of each command class defined in a
             // plug-in, so it is safe to store a refence in a static property.
@@ -19,7 +16,7 @@ namespace VisualARQAdvancedSelector
         }
 
         ///<summary>The only instance of this command.</summary>
-        public static VisualARQAdvancedSelectorCommand Instance
+        public static ParametersSelectorCommand Instance
         {
             get; private set;
         }
@@ -27,7 +24,7 @@ namespace VisualARQAdvancedSelector
         ///<returns>The command name as it appears on the Rhino command line.</returns>
         public override string EnglishName
         {
-            get { return "vaAdvancedSelector"; }
+            get { return "vaxSelectObjectsByParameter"; }
         }
 
         private double DegreeToRadian(double angle)
@@ -61,7 +58,7 @@ namespace VisualARQAdvancedSelector
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
-            SelectionDialog sd = new SelectionDialog();
+            ParametersSelectorDialog sd = new ParametersSelectorDialog();
 
             bool rc = sd.ShowModal(Rhino.UI.RhinoEtoApp.MainWindow);
 

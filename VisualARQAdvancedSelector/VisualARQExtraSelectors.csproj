@@ -57,11 +57,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OpeningsFilterCommand.cs" />
-    <Compile Include="OpeningsFilterDialog.cs" />
-    <Compile Include="SelectionDialog.cs" />
-    <Compile Include="VisualARQAdvancedSelectorCommand.cs" />
-    <Compile Include="VisualARQAdvancedSelectorPlugIn.cs" />
+    <Compile Include="OpeningsSelectorCommand.cs" />
+    <Compile Include="OpeningsSelectorDialog.cs" />
+    <Compile Include="ParametersSelectorDialog.cs" />
+    <Compile Include="ParametersSelectorCommand.cs" />
+    <Compile Include="VisualARQExtraSelectorsPlugIn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

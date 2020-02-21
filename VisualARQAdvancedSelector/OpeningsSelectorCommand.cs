@@ -2,14 +2,13 @@
 using Rhino.Commands;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using static VisualARQ.Script;
 
-namespace VisualARQAdvancedSelector
+namespace VisualARQExtraSelectors
 {
-    public class OpeningsFilterCommand : Command
+    public class OpeningsSelectorCommand : Command
     {
-        public OpeningsFilterCommand()
+        public OpeningsSelectorCommand()
         {
             // Rhino only creates one instance of each command class defined in a
             // plug-in, so it is safe to store a refence in a static property.
@@ -18,7 +17,7 @@ namespace VisualARQAdvancedSelector
 
         
         ///<summary>The only instance of this command.</summary>
-        public static OpeningsFilterCommand Instance
+        public static OpeningsSelectorCommand Instance
         {
             get; private set;
         }
@@ -27,7 +26,7 @@ namespace VisualARQAdvancedSelector
         ///<returns>The command name as it appears on the Rhino command line.</returns>
         public override string EnglishName
         {
-            get { return "vaexOpeningsFilter"; }
+            get { return "vaxSelectOpenings"; }
         }
 
 
@@ -92,7 +91,7 @@ namespace VisualARQAdvancedSelector
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
-            OpeningsFilterDialog ofd = new OpeningsFilterDialog();
+            OpeningsSelectorDialog ofd = new OpeningsSelectorDialog();
 
             bool rc = ofd.ShowModal(Rhino.UI.RhinoEtoApp.MainWindow);
 
@@ -109,8 +108,6 @@ namespace VisualARQAdvancedSelector
 
                 bool includeWindows = selectedWindowStyles.Count > 0;
                 bool includeDoors = selectedDoorStyles.Count > 0;
-
-                RhinoApp.WriteLine("Include " + includeWindows.ToString() + includeDoors.ToString());
 
                 foreach (Rhino.DocObjects.RhinoObject rhobj in rhobjs)
                 {

@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Eto.Drawing;
+﻿using Eto.Drawing;
 using Eto.Forms;
 
-namespace VisualARQAdvancedSelector
+namespace VisualARQExtraSelectors
 {
-    public class SelectionDialog : Dialog<bool>
+    public class ParametersSelectorDialog : Dialog<bool>
     {
-        public SelectionDialog()
+        public ParametersSelectorDialog()
         {
             // Dialog box initialization
             Title = "Select objects by parameter";
@@ -72,8 +67,6 @@ namespace VisualARQAdvancedSelector
             Text = "Add to current selection",
             Checked = true
         };
-
-
 
 
         // METHODS

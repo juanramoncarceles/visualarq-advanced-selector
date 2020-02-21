@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using static VisualARQ.Script;
 
-namespace VisualARQAdvancedSelector
+namespace VisualARQExtraSelectors
 {
     class TextItem
     {
@@ -36,9 +36,9 @@ namespace VisualARQAdvancedSelector
         public static string isBetween = "isBetween";
     }
 
-    public class OpeningsFilterDialog : Dialog<bool>
+    public class OpeningsSelectorDialog : Dialog<bool>
     {
-        public OpeningsFilterDialog()
+        public OpeningsSelectorDialog()
         {
             // Dialog box initialization
             Title = "Openings filter";
@@ -425,8 +425,9 @@ namespace VisualARQAdvancedSelector
 
         public bool CheckWidthDimension()
         {
-            if ((GetWidthComparisonType() != ComparisonType.isBetween && Profile_width_first_input.Value > 0) ||
-                (GetWidthComparisonType() == ComparisonType.isBetween && (Profile_width_first_input.Value > 0 && Profile_width_second_input.Value > 0)))
+            if (GetWidthComparisonType() != ComparisonType.none && 
+                ((GetWidthComparisonType() != ComparisonType.isBetween && Profile_width_first_input.Value > 0) ||
+                (GetWidthComparisonType() == ComparisonType.isBetween && (Profile_width_first_input.Value > 0 && Profile_width_second_input.Value > 0))))
                 return true;
             else
                 return false;
@@ -434,8 +435,9 @@ namespace VisualARQAdvancedSelector
 
         public bool CheckHeightDimension()
         {
-            if ((GetHeightComparisonType() != ComparisonType.isBetween && Profile_height_first_input.Value > 0) ||
-                (GetHeightComparisonType() == ComparisonType.isBetween && (Profile_height_first_input.Value > 0 && Profile_height_second_input.Value > 0)))
+            if (GetHeightComparisonType() != ComparisonType.none &&
+                ((GetHeightComparisonType() != ComparisonType.isBetween && Profile_height_first_input.Value > 0) ||
+                (GetHeightComparisonType() == ComparisonType.isBetween && (Profile_height_first_input.Value > 0 && Profile_height_second_input.Value > 0))))
                 return true;
             else
                 return false;
