@@ -198,6 +198,7 @@ namespace VisualARQExtraSelectors
             Content = layout;
         }
 
+        // TODO: Get and array of Guids of the strucutral templates instead of the names because in other languages it will fail.
         private readonly string[] Structural_profiles = new string[6] { "Circular Hollow", "I Shape", "L Shape", "Rectangular Hollow", "T Shape", "U Shape" };
         
         private static DropDownEntry[] Numerical_comparison_options = new DropDownEntry[5]
