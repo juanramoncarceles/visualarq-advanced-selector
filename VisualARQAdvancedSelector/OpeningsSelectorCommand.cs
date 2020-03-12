@@ -97,7 +97,8 @@ namespace VisualARQExtraSelectors
 
             if (rc)
             {
-                //Rhino.DocObjects.Tables.ObjectTable rhobjs = RhinoDoc.ActiveDoc.Objects; DELETE
+                if (ofd.GetAddToSelection() == null || ofd.GetAddToSelection() == false)
+                    RhinoDoc.ActiveDoc.Objects.UnselectAll();
 
                 IEnumerable<Rhino.DocObjects.RhinoObject> rhobjs = ofd.GetFromSelection() == true ? RhinoDoc.ActiveDoc.Objects.GetSelectedObjects(false, false) : RhinoDoc.ActiveDoc.Objects;
                 
@@ -136,10 +137,6 @@ namespace VisualARQExtraSelectors
                 // Set as selected all the ones that matched.
                 if (matched.Count > 0)
                 {
-                    if (ofd.GetAddToSelection() == null || ofd.GetAddToSelection() == false)
-                    {
-                        rhobjs.UnselectAll();
-                    }
                     foreach (Rhino.DocObjects.RhinoObject o in matched)
                     {
                         o.Select(true);
