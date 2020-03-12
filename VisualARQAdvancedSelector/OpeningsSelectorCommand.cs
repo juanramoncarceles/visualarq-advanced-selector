@@ -97,7 +97,9 @@ namespace VisualARQExtraSelectors
 
             if (rc)
             {
-                Rhino.DocObjects.Tables.ObjectTable rhobjs = RhinoDoc.ActiveDoc.Objects;
+                //Rhino.DocObjects.Tables.ObjectTable rhobjs = RhinoDoc.ActiveDoc.Objects; DELETE
+
+                IEnumerable<Rhino.DocObjects.RhinoObject> rhobjs = ofd.GetFromSelection() == true ? RhinoDoc.ActiveDoc.Objects.GetSelectedObjects(false, false) : RhinoDoc.ActiveDoc.Objects;
                 
                 // List to store all the objects that match.
                 List<Rhino.DocObjects.RhinoObject> matched = new List<Rhino.DocObjects.RhinoObject>();

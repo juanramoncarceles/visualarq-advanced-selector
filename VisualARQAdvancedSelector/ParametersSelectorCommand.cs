@@ -89,26 +89,29 @@ namespace VisualARQExtraSelectors
                                 foreach (Rhino.DocObjects.RhinoObject o in rhobjs)
                                 {
                                     Guid paramId = GetObjectParameterId(paramName, o.Id, true);
-                                    ParameterType t = GetParameterType(paramId);
-                                    // First type number comparison.
-                                    if (IsDirectNumericalType(t) && numValue == Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                    if (paramId != Guid.Empty && GetParameterValue(paramId, o.Id) != null)
                                     {
-                                        matched.Add(o);
-                                    }
-                                    // Type angle comparison.
-                                    else if (t == ParameterType.Angle && DegreeToRadian(numValue) == Convert.ToDouble(GetParameterValue(paramId, o.Id)))
-                                    {
-                                        matched.Add(o);
-                                    }
-                                    // Type percentage comparison.
-                                    else if (t == ParameterType.Percentage && (numValue / 100.0) == Convert.ToDouble(GetParameterValue(paramId, o.Id)))
-                                    {
-                                        matched.Add(o);
-                                    }
-                                    // If it is a number but as a string.
-                                    else if (GetParameterValue(paramId, o.Id) != null && paramValue == GetParameterValue(paramId, o.Id).ToString())
-                                    {
-                                        matched.Add(o);
+                                        ParameterType t = GetParameterType(paramId);
+                                        // First type number comparison.
+                                        if (IsDirectNumericalType(t) && numValue == Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                        {
+                                            matched.Add(o);
+                                        }
+                                        // Type angle comparison.
+                                        else if (t == ParameterType.Angle && DegreeToRadian(numValue) == Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                        {
+                                            matched.Add(o);
+                                        }
+                                        // Type percentage comparison.
+                                        else if (t == ParameterType.Percentage && (numValue / 100.0) == Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                        {
+                                            matched.Add(o);
+                                        }
+                                        // If it is a number but as a string.
+                                        else if (GetParameterValue(paramId, o.Id) != null && paramValue == GetParameterValue(paramId, o.Id).ToString())
+                                        {
+                                            matched.Add(o);
+                                        }
                                     }
                                 }
                             }
@@ -117,21 +120,24 @@ namespace VisualARQExtraSelectors
                                 foreach (Rhino.DocObjects.RhinoObject o in rhobjs)
                                 {
                                     Guid paramId = GetObjectParameterId(paramName, o.Id, true);
-                                    ParameterType t = GetParameterType(paramId);
-                                    // First type number comparison.
-                                    if (IsDirectNumericalType(t) && numValue > Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                    if (paramId != Guid.Empty && GetParameterValue(paramId, o.Id) != null)
                                     {
-                                        matched.Add(o);
-                                    }
-                                    // Type angle comparison.
-                                    else if (t == ParameterType.Angle && DegreeToRadian(numValue) > Convert.ToDouble(GetParameterValue(paramId, o.Id)))
-                                    {
-                                        matched.Add(o);
-                                    }
-                                    // Type percentage comparison.
-                                    else if (t == ParameterType.Percentage && (numValue / 100.0) > Convert.ToDouble(GetParameterValue(paramId, o.Id)))
-                                    {
-                                        matched.Add(o);
+                                        ParameterType t = GetParameterType(paramId);
+                                        // First type number comparison.
+                                        if (IsDirectNumericalType(t) && numValue > Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                        {
+                                            matched.Add(o);
+                                        }
+                                        // Type angle comparison.
+                                        else if (t == ParameterType.Angle && DegreeToRadian(numValue) > Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                        {
+                                            matched.Add(o);
+                                        }
+                                        // Type percentage comparison.
+                                        else if (t == ParameterType.Percentage && (numValue / 100.0) > Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                        {
+                                            matched.Add(o);
+                                        }
                                     }
                                 }
                             }
@@ -140,26 +146,29 @@ namespace VisualARQExtraSelectors
                                 foreach (Rhino.DocObjects.RhinoObject o in rhobjs)
                                 {
                                     Guid paramId = GetObjectParameterId(paramName, o.Id, true);
-                                    ParameterType t = GetParameterType(paramId);
-                                    // First type number comparison.
-                                    if (IsDirectNumericalType(t) && numValue < Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                    if (paramId != Guid.Empty && GetParameterValue(paramId, o.Id) != null)
                                     {
-                                        matched.Add(o);
-                                    }
-                                    // Type angle comparison.
-                                    else if (t == ParameterType.Angle && DegreeToRadian(numValue) < Convert.ToDouble(GetParameterValue(paramId, o.Id)))
-                                    {
-                                        matched.Add(o);
-                                    }
-                                    // Type percentage comparison.
-                                    else if (t == ParameterType.Percentage && (numValue / 100.0) < Convert.ToDouble(GetParameterValue(paramId, o.Id)))
-                                    {
-                                        matched.Add(o);
+                                        ParameterType t = GetParameterType(paramId);
+                                        // First type number comparison.
+                                        if (IsDirectNumericalType(t) && numValue < Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                        {
+                                            matched.Add(o);
+                                        }
+                                        // Type angle comparison.
+                                        else if (t == ParameterType.Angle && DegreeToRadian(numValue) < Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                        {
+                                            matched.Add(o);
+                                        }
+                                        // Type percentage comparison.
+                                        else if (t == ParameterType.Percentage && (numValue / 100.0) < Convert.ToDouble(GetParameterValue(paramId, o.Id)))
+                                        {
+                                            matched.Add(o);
+                                        }
                                     }
                                 }
                             }
                         }
-                        else // If it cannot be converted to num then only compare as text.
+                        else // If it cannot be converted to num then only compare as bool and text.
                         {
                             int comparison = sd.GetComparisonType();
                             if (comparison == 0) // Equality comparison.
@@ -167,15 +176,34 @@ namespace VisualARQExtraSelectors
                                 foreach (Rhino.DocObjects.RhinoObject o in rhobjs)
                                 {
                                     Guid paramId = GetObjectParameterId(paramName, o.Id, true);
-                                    if (paramValue == GetParameterValue(paramId, o.Id).ToString()) // ToString because bool is also compared here.
+                                    if (paramId != Guid.Empty && GetParameterValue(paramId, o.Id) != null)
                                     {
-                                        matched.Add(o);
+                                        ParameterType t = GetParameterType(paramId);
+                                        if (t == ParameterType.Boolean)
+                                        {
+                                            if ((string.Equals(paramValue, "yes", StringComparison.OrdinalIgnoreCase) ||
+                                                string.Equals(paramValue, "true", StringComparison.OrdinalIgnoreCase)) &&
+                                                "True" == GetParameterValue(paramId, o.Id).ToString())
+                                            {
+                                                matched.Add(o);
+                                            }
+                                            else if ((string.Equals(paramValue, "no", StringComparison.OrdinalIgnoreCase) ||
+                                                string.Equals(paramValue, "false", StringComparison.OrdinalIgnoreCase)) &&
+                                                "False" == GetParameterValue(paramId, o.Id).ToString())
+                                            {
+                                                matched.Add(o);
+                                            }
+                                        }
+                                        else if (paramValue == GetParameterValue(paramId, o.Id).ToString())
+                                        {
+                                            matched.Add(o);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                    else // Search only by name.
+                    else // Search only by parameter name.
                     {
                         foreach (Rhino.DocObjects.RhinoObject o in rhobjs)
                         {
