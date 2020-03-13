@@ -1,6 +1,7 @@
 ﻿using Rhino;
 using Rhino.Commands;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using static VisualARQ.Script;
 
@@ -97,11 +98,11 @@ namespace VisualARQExtraSelectors
 
             if (rc)
             {
-                if (ofd.GetAddToSelection() == null || ofd.GetAddToSelection() == false)
-                    RhinoDoc.ActiveDoc.Objects.UnselectAll();
+                List<Rhino.DocObjects.RhinoObject> rhobjs = (ofd.GetFromSelection() == true ? doc.Objects.GetSelectedObjects(false, false) : doc.Objects).ToList();
 
-                IEnumerable<Rhino.DocObjects.RhinoObject> rhobjs = ofd.GetFromSelection() == true ? RhinoDoc.ActiveDoc.Objects.GetSelectedObjects(false, false) : RhinoDoc.ActiveDoc.Objects;
-                
+                if (ofd.GetAddToSelection() == null || ofd.GetAddToSelection() == false)
+                    doc.Objects.UnselectAll();
+
                 // List to store all the objects that match.
                 List<Rhino.DocObjects.RhinoObject> matched = new List<Rhino.DocObjects.RhinoObject>();
 
