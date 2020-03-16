@@ -98,7 +98,12 @@ namespace VisualARQExtraSelectors
 
             if (rc)
             {
-                List<Rhino.DocObjects.RhinoObject> rhobjs = (ofd.GetFromSelection() == true ? doc.Objects.GetSelectedObjects(false, false) : doc.Objects).ToList();
+                IEnumerable<Rhino.DocObjects.RhinoObject> rhobjs;
+
+                if (ofd.GetFromSelection() == true)
+                    rhobjs = doc.Objects.GetSelectedObjects(false, false).ToList();
+                else
+                    rhobjs = doc.Objects;
 
                 if (ofd.GetAddToSelection() == null || ofd.GetAddToSelection() == false)
                     doc.Objects.UnselectAll();

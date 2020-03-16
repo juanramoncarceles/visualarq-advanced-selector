@@ -105,30 +105,21 @@ namespace VisualARQExtraSelectors
             List<ImageTextItem> profileTemplateItems = new List<ImageTextItem>();
             foreach (Guid profileTemplateId in profileTemplateIds)
             {
-                string profileName = GetProfileName(profileTemplateId);
-                if (!Array.Exists(Structural_profiles, p => p == profileName))
+                if (!IsStructuralProfileTemplate(profileTemplateId))
                 {
-                    switch (profileName)
-                    {
-                        case "Rectangular":
-                            profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Rect_profile, Id = profileTemplateId });
-                            break;
-                        case "Circular":
-                            profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Round_profile, Id = profileTemplateId });
-                            break;
-                        case "Romanic":
-                            profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Romanic_profile, Id = profileTemplateId });
-                            break;
-                        case "Gothic":
-                            profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Gothic_profile, Id = profileTemplateId });
-                            break;
-                        case "90º Arc":
-                            profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Arch90_profile, Id = profileTemplateId });
-                            break;
-                        default:
-                            profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Custom_profile, Id = profileTemplateId });
-                            break;
-                    }
+                    string profileName = GetProfileName(profileTemplateId);
+                    if (IsRectangularProfile(profileTemplateId))
+                        profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Rect_profile, Id = profileTemplateId });
+                    else if (IsCircularProfile(profileTemplateId))
+                        profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Round_profile, Id = profileTemplateId });
+                    else if (IsRomanArchProfile(profileTemplateId))
+                        profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Romanic_profile, Id = profileTemplateId });
+                    else if (IsGothicArchProfile(profileTemplateId))
+                        profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Gothic_profile, Id = profileTemplateId });
+                    else if (IsQuarterArchProfile(profileTemplateId))
+                        profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Arch90_profile, Id = profileTemplateId });
+                    else
+                        profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Custom_profile, Id = profileTemplateId });
                 }
             }
             Profile_templates_list.AllowMultipleSelection = true;
@@ -198,10 +189,24 @@ namespace VisualARQExtraSelectors
             Content = layout;
         }
 
-        // TODO: Get and array of Guids of the strucutral templates instead of the names because in other languages it will fail.
-        private readonly string[] Structural_profiles = new string[6] { "Circular Hollow", "I Shape", "L Shape", "Rectangular Hollow", "T Shape", "U Shape" };
-        
-        private static DropDownEntry[] Numerical_comparison_options = new DropDownEntry[5]
+        private bool IsStructuralProfileTemplate(Guid profileId)
+        {
+            if (IsCircularHollowProfile(profileId) ||
+                IsRectangularHollowProfile(profileId) ||
+                IsIShapeProfile(profileId) ||
+                IsLShapeProfile(profileId) ||
+                IsTShapeProfile(profileId) ||
+                IsUShapeProfile(profileId))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private static readonly DropDownEntry[] Numerical_comparison_options = new DropDownEntry[5]
         {
             new DropDownEntry { Text = "all", Value = ComparisonType.none },
             new DropDownEntry { Text = "is equal to", Value = ComparisonType.isEqualTo },
@@ -212,28 +217,28 @@ namespace VisualARQExtraSelectors
 
 
         // Include all window styles input
-        private CheckBox Include_all_window_styles = new CheckBox
+        private readonly CheckBox Include_all_window_styles = new CheckBox
         {
             Text = "Select all",
             Checked = true
         };
 
         // Include none windows styles input
-        private CheckBox Include_none_window_styles = new CheckBox
+        private readonly CheckBox Include_none_window_styles = new CheckBox
         {
             Text = "Unselect all",
             Checked = false
         };
 
         // Include all door styles input
-        private CheckBox Include_all_door_styles = new CheckBox
+        private readonly CheckBox Include_all_door_styles = new CheckBox
         {
             Text = "Select all",
             Checked = true
         };
 
         // Include none window styles input
-        private CheckBox Include_none_door_styles = new CheckBox
+        private readonly CheckBox Include_none_door_styles = new CheckBox
         {
             Text = "Unselect all",
             Checked = false
@@ -249,8 +254,8 @@ namespace VisualARQExtraSelectors
         };
 
         // Opening styles grid container.
-        GridView Window_styles_list = new GridView();
-        GridView Door_styles_list = new GridView();
+        readonly GridView Window_styles_list = new GridView();
+        readonly GridView Door_styles_list = new GridView();
 
         // Profile templates label
         private readonly Label Profiles_label = new Label
@@ -262,10 +267,10 @@ namespace VisualARQExtraSelectors
         };
 
         // Profile templates grid container.
-        private GridView Profile_templates_list = new GridView();
+        private readonly GridView Profile_templates_list = new GridView();
 
         // Profile template dimensions group.
-        private GroupBox Profile_dim_inputs_group = new GroupBox
+        private readonly GroupBox Profile_dim_inputs_group = new GroupBox
         {
             Text = "Profile dimensions",
             Font = new Font(SystemFont.Bold),
@@ -288,7 +293,7 @@ namespace VisualARQExtraSelectors
         };
 
         // Profile width dimension comparison
-        private DropDown Profile_width_comparison = new DropDown
+        private readonly DropDown Profile_width_comparison = new DropDown
         {
             DataStore = Numerical_comparison_options,
             ItemTextBinding = Binding.Property<DropDownEntry, string>(r => r.Text),
@@ -297,7 +302,7 @@ namespace VisualARQExtraSelectors
         };
 
         // Profile height dimension comparison
-        private DropDown Profile_height_comparison = new DropDown
+        private readonly DropDown Profile_height_comparison = new DropDown
         {
             DataStore = Numerical_comparison_options,
             ItemTextBinding = Binding.Property<DropDownEntry, string>(r => r.Text),
@@ -306,25 +311,25 @@ namespace VisualARQExtraSelectors
         };
 
         // Profile width dimension first input
-        private NumericStepper Profile_width_first_input = new NumericStepper
+        private readonly NumericStepper Profile_width_first_input = new NumericStepper
         {
             Enabled = false
         };
 
         // Profile width dimension second input
-        private NumericStepper Profile_width_second_input = new NumericStepper
+        private readonly NumericStepper Profile_width_second_input = new NumericStepper
         {
             Enabled = false
         };
 
         // Profile height dimension first input
-        private NumericStepper Profile_height_first_input = new NumericStepper
+        private readonly NumericStepper Profile_height_first_input = new NumericStepper
         {
             Enabled = false
         };
 
         // Profile height dimension second input
-        private NumericStepper Profile_height_second_input = new NumericStepper
+        private readonly NumericStepper Profile_height_second_input = new NumericStepper
         {
             Enabled = false
         };
@@ -333,7 +338,7 @@ namespace VisualARQExtraSelectors
         // ADD TO SELECTION
 
         // Add to current selection input
-        private CheckBox Add_to_selection_checkbox = new CheckBox
+        private readonly CheckBox Add_to_selection_checkbox = new CheckBox
         {
             Text = "Add to current selection",
             Checked = true
@@ -341,7 +346,7 @@ namespace VisualARQExtraSelectors
 
         // FROM CURRENT SELECTION
 
-        private CheckBox From_selection_checkbox = new CheckBox
+        private readonly CheckBox From_selection_checkbox = new CheckBox
         {
             Text = "From current selection"
         };
@@ -349,9 +354,9 @@ namespace VisualARQExtraSelectors
         // METHODS
 
         /// <summary>
-        /// Returns a list with the ids of all selected window styles
+        /// From all the window styles gets the selected ones.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List with the ids of all selected window styles.</returns>
         public List<Guid> GetSelectedWindowStyles()
         {
             IEnumerable<object> selectedWindowItems = Window_styles_list.SelectedItems; // SelectedRows returns the indexes
@@ -362,9 +367,9 @@ namespace VisualARQExtraSelectors
         }
 
         /// <summary>
-        /// Returns a list with the ids of all selected door styles
+        /// From all the window styles gets the selected ones.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List with the ids of all selected door styles.</returns>
         public List<Guid> GetSelectedDoorStyles()
         {
             IEnumerable<object> selectedDoorItems = Door_styles_list.SelectedItems;
@@ -375,9 +380,9 @@ namespace VisualARQExtraSelectors
         }
 
         /// <summary>
-        /// Returns a list with the ids of all the selected profile templates.
+        /// From all the profile templates gets the selected ones. 
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List with the ids of all the selected profile templates.</returns>
         public List<Guid> GetSelectedProfileTemplates()
         {
             IEnumerable<object> selectedProfileItems = Profile_templates_list.SelectedItems;
@@ -396,7 +401,6 @@ namespace VisualARQExtraSelectors
         // Gets the profile width first input.
         public double GetWidthFirstInputValue()
         {
-            //Profile_width_first_input.Value
             return Profile_width_first_input.Value;
         }
 
