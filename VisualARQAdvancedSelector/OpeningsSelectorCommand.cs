@@ -30,8 +30,12 @@ namespace VisualARQExtraSelectors
             get { return "vaxSelectOpenings"; }
         }
 
-
-        // TODO Crear aqui el struct de los perfiles templates o en el dialog?
+        
+        private enum ProfileMainDimension
+        {
+            Width = 0,
+            Height = 1
+        }
 
 
         private Guid GetOpeningProfileTemplate(Guid openingId)
@@ -40,47 +44,59 @@ namespace VisualARQExtraSelectors
         }
 
 
-        private bool OpeningProfileMatchesDimension(string comparisonType, double firstValue, double secondValue, Guid openingId)
+        private bool OpeningProfileMatchesDimension(ProfileMainDimension dimension, string comparisonType, double firstValue, double secondValue, Guid openingId)
         {
             Guid profileTemplateId = GetOpeningProfileTemplate(openingId);
             Guid profileId = GetOpeningProfile(openingId);
-            double profileWidth = 0.0;
+            double profileDimension = 0.0;
             bool isValidProfileTemplate = false;
             if (IsRectangularProfile(profileTemplateId))
             {
-                profileWidth = GetRectangularProfileSize(profileId).Width;
                 isValidProfileTemplate = true;
+                if (dimension == ProfileMainDimension.Width)
+                    profileDimension = GetRectangularProfileSize(profileId).Width;
+                else if (dimension == ProfileMainDimension.Height)
+                    profileDimension = GetRectangularProfileSize(profileId).Height;
             }
             else if (IsCircularProfile(profileTemplateId))
             {
-                profileWidth = GetCircularProfileSize(profileId).Radius * 2;
                 isValidProfileTemplate = true;
+                profileDimension = GetCircularProfileSize(profileId).Radius * 2;
             }
             else if (IsRomanArchProfile(profileTemplateId))
             {
-                profileWidth = GetRomanArchProfileSize(profileId).Width;
                 isValidProfileTemplate = true;
+                if (dimension == ProfileMainDimension.Width)
+                    profileDimension = GetRomanArchProfileSize(profileId).Width;
+                else if (dimension == ProfileMainDimension.Height)
+                    profileDimension = GetRomanArchProfileSize(profileId).Height;
             }
             else if (IsGothicArchProfile(profileTemplateId))
             {
-                profileWidth = GetGothicArchProfileSize(profileId).Width;
                 isValidProfileTemplate = true;
+                if (dimension == ProfileMainDimension.Width)
+                    profileDimension = GetGothicArchProfileSize(profileId).Width;
+                else if (dimension == ProfileMainDimension.Height)
+                    profileDimension = GetGothicArchProfileSize(profileId).Height;
             }
             else if (IsQuarterArchProfile(profileTemplateId))
             {
-                profileWidth = GetQuarterArchProfileSize(profileId).Width;
                 isValidProfileTemplate = true;
+                if (dimension == ProfileMainDimension.Width)
+                    profileDimension = GetQuarterArchProfileSize(profileId).Width;
+                else if (dimension == ProfileMainDimension.Height)
+                    profileDimension = GetQuarterArchProfileSize(profileId).Height;
             }
 
             if (isValidProfileTemplate)
             {
-                if (comparisonType == ComparisonType.isEqualTo && profileWidth == firstValue)
+                if (comparisonType == ComparisonType.isEqualTo && profileDimension == firstValue)
                     return true;
-                else if (comparisonType == ComparisonType.isLessThan && profileWidth < firstValue)
+                else if (comparisonType == ComparisonType.isLessThan && profileDimension < firstValue)
                     return true;
-                else if (comparisonType == ComparisonType.isGreaterThan && profileWidth > firstValue)
+                else if (comparisonType == ComparisonType.isGreaterThan && profileDimension > firstValue)
                     return true;
-                else if (comparisonType == ComparisonType.isBetween && profileWidth > firstValue && profileWidth < secondValue)
+                else if (comparisonType == ComparisonType.isBetween && profileDimension > firstValue && profileDimension < secondValue)
                     return true;
                 else
                     return false;
@@ -127,9 +143,9 @@ namespace VisualARQExtraSelectors
                         {
                             if (ofd.CheckWidthDimension() || ofd.CheckHeightDimension())
                             {
-                                if (ofd.CheckWidthDimension() && OpeningProfileMatchesDimension(ofd.GetWidthComparisonType(), ofd.GetWidthFirstInputValue(), ofd.GetWidthSecondInputValue(), rhobj.Id))
+                                if (ofd.CheckWidthDimension() && OpeningProfileMatchesDimension(ProfileMainDimension.Width, ofd.GetWidthComparisonType(), ofd.GetWidthFirstInputValue(), ofd.GetWidthSecondInputValue(), rhobj.Id))
                                     matched.Add(rhobj);
-                                else if (ofd.CheckHeightDimension() && OpeningProfileMatchesDimension(ofd.GetHeightComparisonType(), ofd.GetHeightFirstInputValue(), ofd.GetHeightSecondInputValue(), rhobj.Id))
+                                else if (ofd.CheckHeightDimension() && OpeningProfileMatchesDimension(ProfileMainDimension.Height, ofd.GetHeightComparisonType(), ofd.GetHeightFirstInputValue(), ofd.GetHeightSecondInputValue(), rhobj.Id))
                                     matched.Add(rhobj);
                             }
                             else
