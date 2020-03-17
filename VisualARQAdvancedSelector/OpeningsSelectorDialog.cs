@@ -118,8 +118,9 @@ namespace VisualARQExtraSelectors
                         profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Gothic_profile, Id = profileTemplateId });
                     else if (IsQuarterArchProfile(profileTemplateId))
                         profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Arch90_profile, Id = profileTemplateId });
-                    else
-                        profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Custom_profile, Id = profileTemplateId });
+                    // TODO Temporarily skip custom profiles until those are added to the dimension check
+                    //else
+                    //    profileTemplateItems.Add(new ImageTextItem { Text = profileName, Image = Custom_profile, Id = profileTemplateId });
                 }
             }
             Profile_templates_list.AllowMultipleSelection = true;

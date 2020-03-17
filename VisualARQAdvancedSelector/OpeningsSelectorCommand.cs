@@ -141,14 +141,25 @@ namespace VisualARQExtraSelectors
                     {
                         if (selectedProfileTemplates.Contains(GetOpeningProfileTemplate(rhobj.Id)))
                         {
-                            if (ofd.CheckWidthDimension() || ofd.CheckHeightDimension())
+                            bool checkWidth = ofd.CheckWidthDimension();
+                            bool checkHeight = ofd.CheckHeightDimension();
+                            if (checkWidth && !checkHeight &&
+                                OpeningProfileMatchesDimension(ProfileMainDimension.Width, ofd.GetWidthComparisonType(), ofd.GetWidthFirstInputValue(), ofd.GetWidthSecondInputValue(), rhobj.Id))
                             {
-                                if (ofd.CheckWidthDimension() && OpeningProfileMatchesDimension(ProfileMainDimension.Width, ofd.GetWidthComparisonType(), ofd.GetWidthFirstInputValue(), ofd.GetWidthSecondInputValue(), rhobj.Id))
-                                    matched.Add(rhobj);
-                                else if (ofd.CheckHeightDimension() && OpeningProfileMatchesDimension(ProfileMainDimension.Height, ofd.GetHeightComparisonType(), ofd.GetHeightFirstInputValue(), ofd.GetHeightSecondInputValue(), rhobj.Id))
-                                    matched.Add(rhobj);
+                                matched.Add(rhobj);
                             }
-                            else
+                            else if (!checkWidth && checkHeight &&
+                                OpeningProfileMatchesDimension(ProfileMainDimension.Height, ofd.GetHeightComparisonType(), ofd.GetHeightFirstInputValue(), ofd.GetHeightSecondInputValue(), rhobj.Id))
+                            {
+                                matched.Add(rhobj);
+                            }
+                            else if (checkWidth && checkHeight &&
+                                OpeningProfileMatchesDimension(ProfileMainDimension.Width, ofd.GetWidthComparisonType(), ofd.GetWidthFirstInputValue(), ofd.GetWidthSecondInputValue(), rhobj.Id) &&
+                                OpeningProfileMatchesDimension(ProfileMainDimension.Height, ofd.GetHeightComparisonType(), ofd.GetHeightFirstInputValue(), ofd.GetHeightSecondInputValue(), rhobj.Id))
+                            {
+                                matched.Add(rhobj);
+                            }
+                            else if (!checkWidth && !checkHeight)
                             {
                                 matched.Add(rhobj);
                             }
