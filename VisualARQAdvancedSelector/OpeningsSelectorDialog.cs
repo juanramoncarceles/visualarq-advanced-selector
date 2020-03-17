@@ -313,25 +313,33 @@ namespace VisualARQExtraSelectors
         // Profile width dimension first input
         private readonly NumericStepper Profile_width_first_input = new NumericStepper
         {
-            Enabled = false
+            Enabled = false,
+            DecimalPlaces = 2,
+            MaximumDecimalPlaces = 4
         };
 
         // Profile width dimension second input
         private readonly NumericStepper Profile_width_second_input = new NumericStepper
         {
-            Enabled = false
+            Enabled = false,
+            DecimalPlaces = 2,
+            MaximumDecimalPlaces = 4
         };
 
         // Profile height dimension first input
         private readonly NumericStepper Profile_height_first_input = new NumericStepper
         {
-            Enabled = false
+            Enabled = false,
+            DecimalPlaces = 2,
+            MaximumDecimalPlaces = 4
         };
 
         // Profile height dimension second input
         private readonly NumericStepper Profile_height_second_input = new NumericStepper
         {
-            Enabled = false
+            Enabled = false,
+            DecimalPlaces = 2,
+            MaximumDecimalPlaces = 4
         };
 
 
