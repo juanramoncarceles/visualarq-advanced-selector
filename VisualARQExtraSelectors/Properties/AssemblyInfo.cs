@@ -6,29 +6,29 @@ using Rhino.PlugIns;
 // Plug-in Description Attributes - all of these are optional.
 // These will show in Rhino's option dialog, in the tab Plug-ins.
 [assembly: PlugInDescription(DescriptionType.Address, "-")]
-[assembly: PlugInDescription(DescriptionType.Country, "-")]
+[assembly: PlugInDescription(DescriptionType.Country, "Spain")]
 [assembly: PlugInDescription(DescriptionType.Email, "juanramoncarceles@gmail.com")]
 [assembly: PlugInDescription(DescriptionType.Phone, "-")]
 [assembly: PlugInDescription(DescriptionType.Fax, "-")]
 [assembly: PlugInDescription(DescriptionType.Organization, "-")]
 [assembly: PlugInDescription(DescriptionType.UpdateUrl, "-")]
-[assembly: PlugInDescription(DescriptionType.WebSite, "-")]
+[assembly: PlugInDescription(DescriptionType.WebSite, "www.ramoncarceles.com")]
 
 // Icons should be Windows .ico files and contain 32-bit images in the following sizes: 16, 24, 32, 48, and 256.
 // This is a Rhino 6-only description.
-[assembly: PlugInDescription(DescriptionType.Icon, "VisualARQAdvancedSelector.EmbeddedResources.plugin-utility.ico")]
+[assembly: PlugInDescription(DescriptionType.Icon, "VisualARQExtraSelectors.EmbeddedResources.plugin-utility.ico")]
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("VisualARQAdvancedSelector")]
+[assembly: AssemblyTitle("VisualARQExtraSelectors")]
 
 // This will be used also for the plug-in description.
-[assembly: AssemblyDescription("VisualARQAdvancedSelector allows the selection of objects based on its features.")]
+[assembly: AssemblyDescription("VisualARQExtraSelectors allows to select Rhino and VisualARQ objects in different ways.")]
 
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("VisualARQAdvancedSelector")]
+[assembly: AssemblyProduct("VisualARQExtraSelectors")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
