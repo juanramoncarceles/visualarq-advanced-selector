@@ -88,9 +88,10 @@ namespace VisualARQExtraSelectors
             });
             Door_styles_list.SelectAll();
 
-            // The executing assembly to retrieve the icons.
+            // The executing assembly.
             Assembly assembly = Assembly.GetExecutingAssembly();
-            string iconsPath = "VisualARQAdvancedSelector.EmbeddedResources";
+
+            string iconsPath = "VisualARQAdvancedSelector.EmbeddedResources"; // TODO change to VisualARQExtraSelectors
 
             // Profile templates thumbs list
             Icon Rect_profile = new Icon(assembly.GetManifestResourceStream(iconsPath + ".Rectangular-24.ico"));

@@ -21,7 +21,7 @@ using Rhino.PlugIns;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("VisualARQExtraSelectors")]
+[assembly: AssemblyTitle("VisualARQ Extra Selectors")]
 
 // This will be used also for the plug-in description.
 [assembly: AssemblyDescription("VisualARQExtraSelectors allows to select Rhino and VisualARQ objects in different ways.")]
