@@ -3,21 +3,18 @@ using Eto.Forms;
 
 namespace VisualARQExtraSelectors
 {
-    public class ParametersSelectorDialog : Dialog<bool>
+    public class ParametersSelectorForm : Form
     {
-        public ParametersSelectorDialog()
+        public ParametersSelectorForm()
         {
             // Dialog box initialization
             Title = "Select objects by parameter";
             Resizable = false;
+            Topmost = true;
 
-            // Default button
-            DefaultButton = new Button { Text = "Select" };
-            DefaultButton.Click += OnSelectButtonClick;
-
-            // Abort button
-            AbortButton = new Button { Text = "Cancel" };
-            AbortButton.Click += OnCloseButtonClick;
+            // Buttons handlers binding
+            Select_button.Click += OnSelectButtonClick;
+            Reset_button.Click += OnResetButtonClick;
 
             // Table layout to add all the controls
             DynamicLayout layout = new DynamicLayout
@@ -36,9 +33,15 @@ namespace VisualARQExtraSelectors
             layout.BeginVertical();
             layout.AddRow(Add_to_selection_checkbox);
             layout.EndVertical();
-            layout.AddSeparateRow(null, DefaultButton, null, AbortButton, null);
+            layout.AddSeparateRow(null, Select_button, null, Reset_button, null);
             Content = layout;
         }
+
+        // Select button
+        private readonly Button Select_button = new Button { Text = "Select" };
+
+        // Reset button
+        private readonly Button Reset_button = new Button { Text = "Reset" };
 
         // Parameter name input
         private Label Param_name_label = new Label
@@ -94,26 +97,18 @@ namespace VisualARQExtraSelectors
         {
             return Add_to_selection_checkbox.Checked;
         }
-        
-        // Close button click handler
-        private void OnCloseButtonClick<TEventArgs>(object sender, TEventArgs e)
-        {
-            Param_name_textbox.Text = "";
-            // TODO Clean all the inputs
-            Close(false);
-        }
-
+                
         // Select button click handler
         private void OnSelectButtonClick<TEventArgs>(object sender, TEventArgs e)
         {
-            if (Param_name_textbox.Text == "")
-            {
-                Close(false);
-            }
-            else
-            {
-                Close(true);
-            }
+            ParametersSelectorCommand.Instance.FilterByParameter(Rhino.RhinoDoc.ActiveDoc, this);
+        }
+
+        private void OnResetButtonClick<TEventArgs>(object sender, TEventArgs e)
+        {
+            Param_name_textbox.Text = "";
+            Param_value_textbox.Text = "";
+            Comparison_value.SelectedIndex = 0;
         }
     }
 }
