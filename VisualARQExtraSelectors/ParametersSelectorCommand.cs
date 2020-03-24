@@ -56,7 +56,7 @@ namespace VisualARQExtraSelectors
             }
         }
 
-        public void FilterByParameter(RhinoDoc doc, ParametersSelectorForm form)
+        public void SelectByParameter(RhinoDoc doc, ParametersSelectorForm form)
         {
             Rhino.DocObjects.Tables.ObjectTable rhobjs = doc.Objects;
 
@@ -209,13 +209,14 @@ namespace VisualARQExtraSelectors
                     }
                 }
 
+                if (form.GetAddToSelection() == null || form.GetAddToSelection() == false)
+                {
+                    rhobjs.UnselectAll();
+                }
+
                 // Select all the ones that matched.
                 if (matched.Count > 0)
                 {
-                    if (form.GetAddToSelection() == null || form.GetAddToSelection() == false)
-                    {
-                        rhobjs.UnselectAll();
-                    }
                     foreach (Rhino.DocObjects.RhinoObject o in matched)
                     {
                         o.Select(true);

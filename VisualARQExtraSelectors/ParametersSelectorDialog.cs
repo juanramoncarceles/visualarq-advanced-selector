@@ -107,7 +107,7 @@ namespace VisualARQExtraSelectors
         // Select button click handler
         private void OnSelectButtonClick<TEventArgs>(object sender, TEventArgs e)
         {
-            ParametersSelectorCommand.Instance.FilterByParameter(Rhino.RhinoDoc.ActiveDoc, this);
+            ParametersSelectorCommand.Instance.SelectByParameter(Rhino.RhinoDoc.ActiveDoc, this);
         }
 
         private void OnResetButtonClick<TEventArgs>(object sender, TEventArgs e)
