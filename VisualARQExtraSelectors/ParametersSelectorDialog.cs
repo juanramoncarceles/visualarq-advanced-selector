@@ -10,6 +10,8 @@ namespace VisualARQExtraSelectors
             // Dialog box initialization
             Title = "Select objects by parameter";
             Resizable = false;
+            Maximizable = false;
+            Width = 350;
             Topmost = true;
 
             // Buttons handlers binding
@@ -27,7 +29,7 @@ namespace VisualARQExtraSelectors
             layout.AddRow(Param_name_textbox);
             layout.EndVertical();
             layout.BeginVertical();
-            layout.AddRow(param_value_label);
+            layout.AddRow(Param_value_label);
             layout.AddRow(Comparison_value, Param_value_textbox);
             layout.EndVertical();
             layout.BeginVertical();
@@ -44,28 +46,32 @@ namespace VisualARQExtraSelectors
         private readonly Button Reset_button = new Button { Text = "Reset" };
 
         // Parameter name input
-        private Label Param_name_label = new Label
+        private readonly Label Param_name_label = new Label
         {
-            Text = "Parameter name:"
+            Text = "Parameter name",
+            Height = 20
         };
-        private TextBox Param_name_textbox = new TextBox(); // O poner Text=null
+
+        private readonly TextBox Param_name_textbox = new TextBox(); // O poner Text=null
 
         // Comparison option dropdown
-        private DropDown Comparison_value = new DropDown
+        private readonly DropDown Comparison_value = new DropDown
         {
             DataStore = new string[3] { "is equal to", "is less than", "is greater than" },
             SelectedIndex = 0
         };
 
         // Parameter value input
-        private Label param_value_label = new Label
+        private readonly Label Param_value_label = new Label
         {
-            Text = "Parameter value:"
+            Text = "Parameter value",
+            Height = 20
         };
-        private TextBox Param_value_textbox = new TextBox(); // O poner Text=null
+
+        private readonly TextBox Param_value_textbox = new TextBox(); // O poner Text=null
 
         // Add to current selection input
-        private CheckBox Add_to_selection_checkbox = new CheckBox
+        private readonly CheckBox Add_to_selection_checkbox = new CheckBox
         {
             Text = "Add to current selection",
             Checked = true
